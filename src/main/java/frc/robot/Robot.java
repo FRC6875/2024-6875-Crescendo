@@ -42,7 +42,9 @@ public class Robot extends TimedRobot {
    * SmartDashboard integrated updating.
    */
   @Override
-  public void robotPeriodic() {}
+  public void robotPeriodic() {
+
+  }
 
   /**
    * This autonomous (along with the chooser code above) shows how to select between different
