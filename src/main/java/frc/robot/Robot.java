@@ -6,9 +6,12 @@ package frc.robot;
 
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
+
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -16,7 +19,16 @@ import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
  * the package after creating this project, you must also update the build.gradle file in the
  * project.
  */
+
 public class Robot extends TimedRobot {
+  PWMSparkMax frontLeftDriveMotor = new PWMSparkMax(1);
+  PWMSparkMax backLeftDriveMotor = new PWMSparkMax(3);
+  PWMSparkMax frontRightDriveMotor = new PWMSparkMax(2);
+  PWMSparkMax backRightDriveMotor = new PWMSparkMax(4);
+  DifferentialDrive RobotDrive= new DifferentialDrive(frontLeftDriveMotor,frontRightDriveMotor);
+  XboxController Controller = new XboxController(0);
+
+
   private static final String kDefaultAuto = "Default";
   private static final String kCustomAuto = "My Auto";
   private String m_autoSelected;
@@ -33,6 +45,12 @@ public class Robot extends TimedRobot {
     SmartDashboard.putData("Auto choices", m_chooser);
     CameraServer.startAutomaticCapture();
     CameraServer.startAutomaticCapture();
+    frontLeftDriveMotor.setInverted(true);
+    backLeftDriveMotor.setInverted(false);
+    frontRightDriveMotor.setInverted(false);
+    backRightDriveMotor.setInverted(true);
+    frontLeftDriveMotor.addFollower(backLeftDriveMotor);
+    frontRightDriveMotor.addFollower(backRightDriveMotor);
   }
 
   /**
@@ -44,7 +62,15 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
+frontLeftDriveMotor.set(0.2);
+if(Controller.getAButton()){
+  RobotDrive.arcadeDrive(0.2,0);
+  System.out.println("Driving");
 
+}else{
+  RobotDrive.arcadeDrive(0,0);
+  System.out.println("Not driving");
+}
   }
 
   /**
