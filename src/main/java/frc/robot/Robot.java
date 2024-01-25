@@ -5,10 +5,11 @@
 package frc.robot;
 
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.wpilibj.CAN;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
+import com.revrobotics.CANSparkMax;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -21,11 +22,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 
 public class Robot extends TimedRobot {
-  PWMSparkMax frontLeftDriveMotor = new PWMSparkMax(1);
-  PWMSparkMax backLeftDriveMotor = new PWMSparkMax(3);
-  PWMSparkMax frontRightDriveMotor = new PWMSparkMax(2);
-  PWMSparkMax backRightDriveMotor = new PWMSparkMax(4);
-  DifferentialDrive RobotDrive= new DifferentialDrive(frontLeftDriveMotor,frontRightDriveMotor);
+  CANSparkMax frontLeftDriveMotor = new CANSparkMax(1);
+  CANSparkMax backLeftDriveMotor = new CANSparkMax(3);
+  CANSparkMax frontRightDriveMotor = new CANSparkMax(2);
+  CANSparkMax backRightDriveMotor = new CANSparkMax(4);
+  DifferentialDrive RobotDrive= new DifferentialDrive(frontLeftDriveMotor::set,frontRightDriveMotor::set);
   XboxController Controller = new XboxController(0);
 
 
@@ -62,14 +63,13 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
-frontLeftDriveMotor.set(0.2);
 if(Controller.getAButton()){
-  RobotDrive.arcadeDrive(0.2,0);
-  System.out.println("Driving");
+  RobotDrive.tankDrive(0.5,0.5);
+ // System.out.println("Driving");
 
 }else{
-  RobotDrive.arcadeDrive(0,0);
-  System.out.println("Not driving");
+  RobotDrive.tankDrive(0,0);
+ // System.out.println("Not driving");
 }
   }
 
