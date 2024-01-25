@@ -4,12 +4,14 @@
 
 package frc.robot;
 
+import com.revrobotics.AbsoluteEncoder;
+import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.CANSparkMax;
+
 import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.wpilibj.CAN;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import com.revrobotics.CANSparkMax;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -22,12 +24,16 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 
 public class Robot extends TimedRobot {
-  CANSparkMax frontLeftDriveMotor = new CANSparkMax(1);
-  CANSparkMax backLeftDriveMotor = new CANSparkMax(3);
-  CANSparkMax frontRightDriveMotor = new CANSparkMax(2);
-  CANSparkMax backRightDriveMotor = new CANSparkMax(4);
+  CANSparkMax frontLeftDriveMotor = new CANSparkMax(1, MotorType.kBrushless);
+  CANSparkMax backLeftDriveMotor = new CANSparkMax(3, MotorType.kBrushless);
+  CANSparkMax frontRightDriveMotor = new CANSparkMax(2, MotorType.kBrushless);
+  CANSparkMax backRightDriveMotor = new CANSparkMax(4, MotorType.kBrushless);
   DifferentialDrive RobotDrive= new DifferentialDrive(frontLeftDriveMotor::set,frontRightDriveMotor::set);
   XboxController Controller = new XboxController(0);
+  AbsoluteEncoder frontLeftEncoder;
+AbsoluteEncoder frontRightEncoder;
+AbsoluteEncoder backLeftEncoder;
+AbsoluteEncoder backRightEncoder;
 
 
   private static final String kDefaultAuto = "Default";
@@ -41,6 +47,14 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
+    frontLeftDriveMotor.restoreFactoryDefaults();
+   frontLeftDriveMotor.restoreFactoryDefaults();
+    backRightDriveMotor.restoreFactoryDefaults();
+    backLeftDriveMotor.restoreFactoryDefaults();
+     backLeftEncoder = backLeftDriveMotor.getEncoder(Type.kHallSensor, 42);
+    backRightEncoder = backRightDriveMotor.getEncoder(Type.kHallSensor, 42);
+    frontLeftEncoder = frontLeftDriveMotor.getEncoder(Type.kHallSensor, 42);
+    frontRightEncoder = frontRightDriveMotor.getEncoder(Type.kHallSensor, 42);
     m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
     m_chooser.addOption("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
@@ -50,8 +64,8 @@ public class Robot extends TimedRobot {
     backLeftDriveMotor.setInverted(false);
     frontRightDriveMotor.setInverted(false);
     backRightDriveMotor.setInverted(true);
-    frontLeftDriveMotor.addFollower(backLeftDriveMotor);
-    frontRightDriveMotor.addFollower(backRightDriveMotor);
+    backLeftDriveMotor.follow(frontLeftDriveMotor);
+    backRightDriveMotor.follow(frontRightDriveMotor);
   }
 
   /**
