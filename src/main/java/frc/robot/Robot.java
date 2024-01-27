@@ -4,9 +4,10 @@
 
 package frc.robot;
 
-import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkRelativeEncoder.Type;
 
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -28,12 +29,16 @@ public class Robot extends TimedRobot {
   CANSparkMax backLeftDriveMotor = new CANSparkMax(3, MotorType.kBrushless);
   CANSparkMax frontRightDriveMotor = new CANSparkMax(2, MotorType.kBrushless);
   CANSparkMax backRightDriveMotor = new CANSparkMax(4, MotorType.kBrushless);
-  DifferentialDrive RobotDrive= new DifferentialDrive(frontLeftDriveMotor::set,frontRightDriveMotor::set);
+ 
+  DifferentialDrive frontRobotDrive;
+  DifferentialDrive backRobotDrive;
+
   XboxController Controller = new XboxController(0);
-  AbsoluteEncoder frontLeftEncoder;
-AbsoluteEncoder frontRightEncoder;
-AbsoluteEncoder backLeftEncoder;
-AbsoluteEncoder backRightEncoder;
+  
+RelativeEncoder frontLeftEncoder;
+RelativeEncoder frontRightEncoder;
+RelativeEncoder backLeftEncoder;
+RelativeEncoder backRightEncoder;
 
 
   private static final String kDefaultAuto = "Default";
@@ -47,25 +52,48 @@ AbsoluteEncoder backRightEncoder;
    */
   @Override
   public void robotInit() {
+    
     frontLeftDriveMotor.restoreFactoryDefaults();
-   frontLeftDriveMotor.restoreFactoryDefaults();
+   frontRightDriveMotor.restoreFactoryDefaults();
     backRightDriveMotor.restoreFactoryDefaults();
     backLeftDriveMotor.restoreFactoryDefaults();
-     backLeftEncoder = backLeftDriveMotor.getEncoder(Type.kHallSensor, 42);
+    
+    backLeftEncoder = backLeftDriveMotor.getEncoder(Type.kHallSensor, 42);
     backRightEncoder = backRightDriveMotor.getEncoder(Type.kHallSensor, 42);
     frontLeftEncoder = frontLeftDriveMotor.getEncoder(Type.kHallSensor, 42);
     frontRightEncoder = frontRightDriveMotor.getEncoder(Type.kHallSensor, 42);
+   
     m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
     m_chooser.addOption("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
+   
     CameraServer.startAutomaticCapture();
     CameraServer.startAutomaticCapture();
-    frontLeftDriveMotor.setInverted(true);
+
+    frontLeftDriveMotor.setInverted(false);
     backLeftDriveMotor.setInverted(false);
-    frontRightDriveMotor.setInverted(false);
+    frontRightDriveMotor.setInverted(true);
     backRightDriveMotor.setInverted(true);
-    backLeftDriveMotor.follow(frontLeftDriveMotor);
-    backRightDriveMotor.follow(frontRightDriveMotor);
+
+     frontRobotDrive = new DifferentialDrive(frontLeftDriveMotor::set,frontRightDriveMotor::set);
+     backRobotDrive = new DifferentialDrive(backLeftDriveMotor::set,backRightDriveMotor::set);
+
+   // backLeftDriveMotor.follow(frontLeftDriveMotor);
+   // backRightDriveMotor.follow(frontRightDriveMotor);
+
+
+
+  }
+
+  private double getSpeed() {
+    if (Controller.getLeftY()<0){
+      return  -Controller.getLeftY()*Controller.getLeftY();
+      
+    }
+   else {
+    return   Controller.getLeftY()*Controller.getLeftY();
+   }
+    
   }
 
   /**
@@ -77,14 +105,7 @@ AbsoluteEncoder backRightEncoder;
    */
   @Override
   public void robotPeriodic() {
-if(Controller.getAButton()){
-  RobotDrive.tankDrive(0.5,0.5);
- // System.out.println("Driving");
 
-}else{
-  RobotDrive.tankDrive(0,0);
- // System.out.println("Not driving");
-}
   }
 
   /**
@@ -99,6 +120,7 @@ if(Controller.getAButton()){
    */
   @Override
   public void autonomousInit() {
+   
     m_autoSelected = m_chooser.getSelected();
     // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
     System.out.println("Auto selected: " + m_autoSelected);
@@ -124,7 +146,13 @@ if(Controller.getAButton()){
 
   /** This function is called periodically during operator control. */
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+  
+  frontRobotDrive.arcadeDrive(getSpeed(),Controller.getLeftX());
+  backRobotDrive.arcadeDrive(getSpeed(),Controller.getLeftX());
+
+}
+  
 
   /** This function is called once when the robot is disabled. */
   @Override
