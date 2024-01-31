@@ -6,9 +6,12 @@ package frc.robot;
 
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkLowLevel.MotorType;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -17,6 +20,14 @@ import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
  * project.
  */
 public class Robot extends TimedRobot {
+
+  CANSparkMax frontLeftDM = new CANSparkMax(1, MotorType.kBrushless);
+  CANSparkMax frontRightDM = new CANSparkMax(2,MotorType.kBrushless);
+  CANSparkMax backLeftDM = new CANSparkMax(3,MotorType.kBrushless);
+  CANSparkMax backRightDM = new CANSparkMax(4,MotorType.kBrushless);
+  DifferentialDrive robotD= new DifferentialDrive(frontLeftDM, frontRightDM);
+  XboxController controller = new XboxController(0);
+
   private static final String kDefaultAuto = "Default";
   private static final String kCustomAuto = "My Auto";
   private String m_autoSelected;
@@ -33,6 +44,19 @@ public class Robot extends TimedRobot {
     SmartDashboard.putData("Auto choices", m_chooser);
     CameraServer.startAutomaticCapture();
     CameraServer.startAutomaticCapture();
+
+    frontLeftDM.setInverted(true);
+    frontRightDM.setInverted(false);
+    backRightDM.setInverted(true);
+    backLeftDM.setInverted(false);
+
+    frontLeftDM.follow(backLeftDM);
+    frontRightDM.follow(backRightDM);
+
+    //frontLeftDM.set(0.2);
+    //frontRightDM.set(0.2);
+        
+
   }
 
   /**
@@ -44,7 +68,16 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
+//frontLeftDM.set(0);
+    //frontRightDM.set(0);
 
+    if(controller.getAButton()){
+      System.out.println("driving");
+      robotD.arcadeDrive(0.2, 0);
+    }else{
+      System.out.println("not driving");
+      robotD.arcadeDrive(0, 0);
+    }
   }
 
   /**
