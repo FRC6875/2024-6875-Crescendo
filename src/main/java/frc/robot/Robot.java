@@ -129,6 +129,11 @@ RelativeEncoder backRightEncoder;
    */
   @Override
   public void autonomousInit() {
+       
+       backLeftEncoder.setPosition(0);
+       backRightEncoder.setPosition(0);
+       frontLeftEncoder.setPosition(0);
+       frontRightEncoder.setPosition(0);
    
     m_autoSelected = m_chooser.getSelected();
     // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
@@ -144,16 +149,16 @@ RelativeEncoder backRightEncoder;
         break;
       case kDefaultAuto:
       default:
-       backLeftEncoder.setPosition(0);
-       backRightEncoder.setPosition(0);
-       frontLeftEncoder.setPosition(0);
-       frontRightEncoder.setPosition(0);
+       
        if (frontRightEncoder.getPosition()<80) {
-      
+       frontRobotDrive.arcadeDrive (0.5,0);
+       backRobotDrive.arcadeDrive (0.5,0);
         
        }
        else {
-        
+         
+       frontRobotDrive.arcadeDrive (0,0);
+       backRobotDrive.arcadeDrive (0,0);
        }
 
         break;
