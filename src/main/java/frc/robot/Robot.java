@@ -62,7 +62,12 @@ RelativeEncoder backRightEncoder;
     backRightEncoder = backRightDriveMotor.getEncoder(Type.kHallSensor, 42);
     frontLeftEncoder = frontLeftDriveMotor.getEncoder(Type.kHallSensor, 42);
     frontRightEncoder = frontRightDriveMotor.getEncoder(Type.kHallSensor, 42);
-   
+
+    frontLeftEncoder.setPositionConversionFactor(Math.PI*6/8.45);
+    frontRightEncoder.setPositionConversionFactor(Math.PI*6/8.45);
+    backLeftEncoder.setPositionConversionFactor(Math.PI*6/8.45);
+    backRightEncoder.setPositionConversionFactor(Math.PI*6/8.45);
+
     m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
     m_chooser.addOption("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
@@ -105,7 +110,11 @@ RelativeEncoder backRightEncoder;
    */
   @Override
   public void robotPeriodic() {
-
+    
+    SmartDashboard.putNumber("Front Left Distance", frontLeftEncoder.getPosition());
+    SmartDashboard.putNumber("Front Right Distance", frontRightEncoder.getPosition());
+    SmartDashboard.putNumber("Back Left Distance", backLeftEncoder.getPosition());
+    SmartDashboard.putNumber("Back Right Distance", backRightEncoder.getPosition());
   }
 
   /**
