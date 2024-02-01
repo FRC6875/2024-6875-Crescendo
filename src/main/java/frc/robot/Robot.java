@@ -68,7 +68,7 @@ RelativeEncoder backRightEncoder;
     backLeftEncoder.setPositionConversionFactor(Math.PI*6/8.45);
     backRightEncoder.setPositionConversionFactor(Math.PI*6/8.45);
 
-    m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
+    m_chooser.setDefaultOption("Leave Auto", kDefaultAuto);
     m_chooser.addOption("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
    
@@ -144,7 +144,18 @@ RelativeEncoder backRightEncoder;
         break;
       case kDefaultAuto:
       default:
-        // Put default auto code here
+       backLeftEncoder.setPosition(0);
+       backRightEncoder.setPosition(0);
+       frontLeftEncoder.setPosition(0);
+       frontRightEncoder.setPosition(0);
+       if (frontRightEncoder.getPosition()<80) {
+      
+        
+       }
+       else {
+        
+       }
+
         break;
     }
   }
