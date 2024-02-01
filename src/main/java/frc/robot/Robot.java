@@ -4,14 +4,18 @@
 
 package frc.robot;
 
+import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkRelativeEncoder.Type;
+
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkLowLevel.MotorType;
+import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -19,15 +23,8 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
  * the package after creating this project, you must also update the build.gradle file in the
  * project.
  */
+
 public class Robot extends TimedRobot {
-
-  CANSparkMax frontLeftDM = new CANSparkMax(1, MotorType.kBrushless);
-  CANSparkMax frontRightDM = new CANSparkMax(2,MotorType.kBrushless);
-  CANSparkMax backLeftDM = new CANSparkMax(3,MotorType.kBrushless);
-  CANSparkMax backRightDM = new CANSparkMax(4,MotorType.kBrushless);
-  DifferentialDrive robotD= new DifferentialDrive(frontLeftDM, frontRightDM);
-  XboxController controller = new XboxController(0);
-
   private static final String kDefaultAuto = "Default";
   private static final String kCustomAuto = "My Auto";
   private String m_autoSelected;
@@ -39,24 +36,23 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
+    
+    frontLeftDriveMotor.restoreFactoryDefaults();
+   frontRightDriveMotor.restoreFactoryDefaults();
+    backRightDriveMotor.restoreFactoryDefaults();
+    backLeftDriveMotor.restoreFactoryDefaults();
+    
+    backLeftEncoder = backLeftDriveMotor.getEncoder(Type.kHallSensor, 42);
+    backRightEncoder = backRightDriveMotor.getEncoder(Type.kHallSensor, 42);
+    frontLeftEncoder = frontLeftDriveMotor.getEncoder(Type.kHallSensor, 42);
+    frontRightEncoder = frontRightDriveMotor.getEncoder(Type.kHallSensor, 42);
+   
     m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
     m_chooser.addOption("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
+   
     CameraServer.startAutomaticCapture();
     CameraServer.startAutomaticCapture();
-
-    frontLeftDM.setInverted(true);
-    frontRightDM.setInverted(false);
-    backRightDM.setInverted(true);
-    backLeftDM.setInverted(false);
-
-    frontLeftDM.follow(backLeftDM);
-    frontRightDM.follow(backRightDM);
-
-    //frontLeftDM.set(0.2);
-    //frontRightDM.set(0.2);
-        
-
   }
 
   /**
@@ -92,6 +88,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
+   
     m_autoSelected = m_chooser.getSelected();
     // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
     System.out.println("Auto selected: " + m_autoSelected);
@@ -117,7 +114,13 @@ public class Robot extends TimedRobot {
 
   /** This function is called periodically during operator control. */
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+  
+  frontRobotDrive.arcadeDrive(getSpeed(),Controller.getLeftX());
+  backRobotDrive.arcadeDrive(getSpeed(),Controller.getLeftX());
+
+}
+  
 
   /** This function is called once when the robot is disabled. */
   @Override
