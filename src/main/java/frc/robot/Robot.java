@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
+
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -25,6 +25,22 @@ import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
  */
 
 public class Robot extends TimedRobot {
+  CANSparkMax frontLeftDriveMotor = new CANSparkMax(1, MotorType.kBrushless);
+  CANSparkMax backLeftDriveMotor = new CANSparkMax(3, MotorType.kBrushless);
+  CANSparkMax frontRightDriveMotor = new CANSparkMax(2, MotorType.kBrushless);
+  CANSparkMax backRightDriveMotor = new CANSparkMax(4, MotorType.kBrushless);
+ 
+  DifferentialDrive frontRobotDrive;
+  DifferentialDrive backRobotDrive;
+
+  XboxController Controller = new XboxController(0);
+  
+RelativeEncoder frontLeftEncoder;
+RelativeEncoder frontRightEncoder;
+RelativeEncoder backLeftEncoder;
+RelativeEncoder backRightEncoder;
+
+
   private static final String kDefaultAuto = "Default";
   private static final String kCustomAuto = "My Auto";
   private String m_autoSelected;
@@ -53,6 +69,31 @@ public class Robot extends TimedRobot {
    
     CameraServer.startAutomaticCapture();
     CameraServer.startAutomaticCapture();
+
+    frontLeftDriveMotor.setInverted(false);
+    backLeftDriveMotor.setInverted(false);
+    frontRightDriveMotor.setInverted(true);
+    backRightDriveMotor.setInverted(true);
+
+     frontRobotDrive = new DifferentialDrive(frontLeftDriveMotor::set,frontRightDriveMotor::set);
+     backRobotDrive = new DifferentialDrive(backLeftDriveMotor::set,backRightDriveMotor::set);
+
+   // backLeftDriveMotor.follow(frontLeftDriveMotor);
+   // backRightDriveMotor.follow(frontRightDriveMotor);
+
+
+
+  }
+
+  private double getSpeed() {
+    if (Controller.getLeftY()<0){
+      return  -Controller.getLeftY()*Controller.getLeftY();
+      
+    }
+   else {
+    return   Controller.getLeftY()*Controller.getLeftY();
+   }
+    
   }
 
   /**
@@ -64,16 +105,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
-//frontLeftDM.set(0);
-    //frontRightDM.set(0);
 
-    if(controller.getAButton()){
-      System.out.println("driving");
-      robotD.arcadeDrive(0.2, 0);
-    }else{
-      System.out.println("not driving");
-      robotD.arcadeDrive(0, 0);
-    }
   }
 
   /**
