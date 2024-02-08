@@ -9,6 +9,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkRelativeEncoder.Type;
 
+
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
@@ -41,8 +42,10 @@ RelativeEncoder backLeftEncoder;
 RelativeEncoder backRightEncoder;
 
 
-  private static final String kDefaultAuto = "Default";
-  private static final String kCustomAuto = "My Auto";
+  private static final String kShootAndDrive = "Shoot And Drive";
+  private static final String kLeave = "Leave";
+  private static final String kShootLeavePickup = "Shoot and drive pick up and stay";
+  private static final String kSitAndDoNothing = "Do nothing";
   private String m_autoSelected;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
 
@@ -68,8 +71,10 @@ RelativeEncoder backRightEncoder;
     backLeftEncoder.setPositionConversionFactor(Math.PI*6/8.45);
     backRightEncoder.setPositionConversionFactor(Math.PI*6/8.45);
 
-    m_chooser.setDefaultOption("Leave Auto", kDefaultAuto);
-    m_chooser.addOption("My Auto", kCustomAuto);
+    m_chooser.setDefaultOption("Leave Auto", kLeave);
+    m_chooser.addOption("Shoot and Leave", kShootAndDrive);
+    m_chooser.addOption("Shoot and drive pick up and stay", kShootLeavePickup);
+    m_chooser.addOption("Do nothing", kSitAndDoNothing);
     SmartDashboard.putData("Auto choices", m_chooser);
    
     CameraServer.startAutomaticCapture();
@@ -134,6 +139,8 @@ RelativeEncoder backRightEncoder;
        backRightEncoder.setPosition(0);
        frontLeftEncoder.setPosition(0);
        frontRightEncoder.setPosition(0);
+
+       
    
     m_autoSelected = m_chooser.getSelected();
     // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
@@ -144,10 +151,15 @@ RelativeEncoder backRightEncoder;
   @Override
   public void autonomousPeriodic() {
     switch (m_autoSelected) {
-      case kCustomAuto:
+      case kShootAndDrive:
         // Put custom auto code here
         break;
-      case kDefaultAuto:
+      case kLeave:
+      break;
+
+      case kShootLeavePickup:
+      break;
+
       default:
        
        if (frontRightEncoder.getPosition()<80) {
