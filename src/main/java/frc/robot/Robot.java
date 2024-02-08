@@ -155,17 +155,7 @@ RelativeEncoder backRightEncoder;
         // Put custom auto code here
         break;
       case kLeave:
-      break;
-
-      case kShootLeavePickup:
-      break;
-
-      case kSitAndDoNothing:
-      break;
-
-      default:
-       
-       if (frontRightEncoder.getPosition()<80) {
+        if (frontRightEncoder.getPosition()<80) {
        frontRobotDrive.arcadeDrive (0.5,0);
        backRobotDrive.arcadeDrive (0.5,0);
         
@@ -175,7 +165,15 @@ RelativeEncoder backRightEncoder;
        frontRobotDrive.arcadeDrive (0,0);
        backRobotDrive.arcadeDrive (0,0);
        }
+      break;
 
+      case kShootLeavePickup:
+      break;
+
+      case kSitAndDoNothing:
+      break;
+
+      default:
         break;
     }
   }
