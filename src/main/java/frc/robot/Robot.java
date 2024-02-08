@@ -160,6 +160,9 @@ RelativeEncoder backRightEncoder;
       case kShootLeavePickup:
       break;
 
+      case kSitAndDoNothing:
+      break;
+
       default:
        
        if (frontRightEncoder.getPosition()<80) {
