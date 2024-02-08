@@ -30,6 +30,8 @@ public class Robot extends TimedRobot {
   CANSparkMax backLeftDriveMotor = new CANSparkMax(3, MotorType.kBrushless);
   CANSparkMax frontRightDriveMotor = new CANSparkMax(2, MotorType.kBrushless);
   CANSparkMax backRightDriveMotor = new CANSparkMax(4, MotorType.kBrushless);
+   
+CANSparkMax intakeMotor = new CANSparkMax(5, MotorType.kBrushless);
  
   DifferentialDrive frontRobotDrive;
   DifferentialDrive backRobotDrive;
@@ -120,6 +122,8 @@ RelativeEncoder backRightEncoder;
     SmartDashboard.putNumber("Front Right Distance", frontRightEncoder.getPosition());
     SmartDashboard.putNumber("Back Left Distance", backLeftEncoder.getPosition());
     SmartDashboard.putNumber("Back Right Distance", backRightEncoder.getPosition());
+    SmartDashboard.putNumber("Intake Position", backLeftEncoder.getPosition());
+
   }
 
   /**
@@ -155,7 +159,7 @@ RelativeEncoder backRightEncoder;
         // Put custom auto code here
         break;
       case kLeave:
-        if (frontRightEncoder.getPosition()<80) {
+        if ((frontRightEncoder.getPosition()<80)&&(frontLeftEncoder.getPosition()<80)&&(backRightEncoder.getPosition()<80)&&(backLeftEncoder.getPosition()<80)) {
        frontRobotDrive.arcadeDrive (0.5,0);
        backRobotDrive.arcadeDrive (0.5,0);
         
