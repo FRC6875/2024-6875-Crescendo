@@ -89,8 +89,7 @@ RelativeEncoder backRightEncoder;
      frontRobotDrive = new DifferentialDrive(frontLeftDriveMotor::set,frontRightDriveMotor::set);
      backRobotDrive = new DifferentialDrive(backLeftDriveMotor::set,backRightDriveMotor::set);
 
-   // backLeftDriveMotor.follow(frontLeftDriveMotor);
-   // backRightDriveMotor.follow(frontRightDriveMotor);
+
 
 
 
