@@ -43,7 +43,6 @@ RelativeEncoder frontRightEncoder;
 RelativeEncoder backLeftEncoder;
 RelativeEncoder backRightEncoder;
 
-
   private static final String kShootAndDrive = "Shoot And Drive";
   private static final String kLeave = "Leave";
   private static final String kShootLeavePickup = "Shoot and drive pick up and stay";
