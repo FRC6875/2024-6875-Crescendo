@@ -43,6 +43,8 @@ RelativeEncoder frontRightEncoder;
 RelativeEncoder backLeftEncoder;
 RelativeEncoder backRightEncoder;
 
+RelativeEncoder intakeEncoder;
+
   private static final String kShootAndDrive = "Shoot And Drive";
   private static final String kLeave = "Leave";
   private static final String kShootLeavePickup = "Shoot and drive pick up and stay";
@@ -58,14 +60,19 @@ RelativeEncoder backRightEncoder;
   public void robotInit() {
     
     frontLeftDriveMotor.restoreFactoryDefaults();
-   frontRightDriveMotor.restoreFactoryDefaults();
+    frontRightDriveMotor.restoreFactoryDefaults();
     backRightDriveMotor.restoreFactoryDefaults();
     backLeftDriveMotor.restoreFactoryDefaults();
+
+    intakeMotor.restoreFactoryDefaults();
     
     backLeftEncoder = backLeftDriveMotor.getEncoder(Type.kHallSensor, 42);
     backRightEncoder = backRightDriveMotor.getEncoder(Type.kHallSensor, 42);
     frontLeftEncoder = frontLeftDriveMotor.getEncoder(Type.kHallSensor, 42);
     frontRightEncoder = frontRightDriveMotor.getEncoder(Type.kHallSensor, 42);
+
+    intakeEncoder = intakeMotor.getEncoder(Type.kHallSensor, 42);
+
 
     frontLeftEncoder.setPositionConversionFactor(Math.PI*6/8.45);
     frontRightEncoder.setPositionConversionFactor(Math.PI*6/8.45);
@@ -89,8 +96,7 @@ RelativeEncoder backRightEncoder;
      frontRobotDrive = new DifferentialDrive(frontLeftDriveMotor::set,frontRightDriveMotor::set);
      backRobotDrive = new DifferentialDrive(backLeftDriveMotor::set,backRightDriveMotor::set);
 
-   // backLeftDriveMotor.follow(frontLeftDriveMotor);
-   // backRightDriveMotor.follow(frontRightDriveMotor);
+
 
 
 
@@ -121,7 +127,8 @@ RelativeEncoder backRightEncoder;
     SmartDashboard.putNumber("Front Right Distance", frontRightEncoder.getPosition());
     SmartDashboard.putNumber("Back Left Distance", backLeftEncoder.getPosition());
     SmartDashboard.putNumber("Back Right Distance", backRightEncoder.getPosition());
-    SmartDashboard.putNumber("Intake Position", backLeftEncoder.getPosition());
+    
+    SmartDashboard.putNumber("Intake Position", intakeEncoder.getPosition());
 
   }
 
@@ -142,6 +149,8 @@ RelativeEncoder backRightEncoder;
        backRightEncoder.setPosition(0);
        frontLeftEncoder.setPosition(0);
        frontRightEncoder.setPosition(0);
+
+       intakeEncoder.setPosition(0);
 
        
    
@@ -192,6 +201,7 @@ RelativeEncoder backRightEncoder;
   frontRobotDrive.arcadeDrive(getSpeed(),Controller.getLeftX());
   backRobotDrive.arcadeDrive(getSpeed(),Controller.getLeftX());
 
+  
 }
   
 
