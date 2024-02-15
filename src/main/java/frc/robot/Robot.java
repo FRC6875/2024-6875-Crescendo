@@ -38,6 +38,9 @@ public class Robot extends TimedRobot {
   DifferentialDrive frontRobotDrive;
   DifferentialDrive backRobotDrive;
 
+  DifferentialDrive shootDrive;
+
+
   XboxController Controller1 = new XboxController(0);
     XboxController Controller2 = new XboxController(1);
 
@@ -109,7 +112,7 @@ RelativeEncoder rightShootEncoder;
 
      frontRobotDrive = new DifferentialDrive(frontLeftDriveMotor::set,frontRightDriveMotor::set);
      backRobotDrive = new DifferentialDrive(backLeftDriveMotor::set,backRightDriveMotor::set);
-
+     shootDrive = new DifferentialDrive(leftShoot::set,rightShoot::set);
      
 
 
