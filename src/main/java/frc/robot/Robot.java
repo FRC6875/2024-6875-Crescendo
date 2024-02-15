@@ -31,8 +31,8 @@ public class Robot extends TimedRobot {
   CANSparkMax frontRightDriveMotor = new CANSparkMax(2, MotorType.kBrushless);
   CANSparkMax backRightDriveMotor = new CANSparkMax(4, MotorType.kBrushless);
    
-CANSparkMax intakeMotor1 = new CANSparkMax(5, MotorType.kBrushed);
-CANSparkMax intakeMotor2 = new CANSparkMax(6, MotorType.kBrushed);
+  CANSparkMax leftShoot = new CANSparkMax(5, MotorType.kBrushless);
+  CANSparkMax rightShoot = new CANSparkMax(6, MotorType.kBrushless);
 
 
   DifferentialDrive frontRobotDrive;
@@ -47,7 +47,10 @@ RelativeEncoder frontRightEncoder;
 RelativeEncoder backLeftEncoder;
 RelativeEncoder backRightEncoder;
 
-RelativeEncoder intakeEncoder;
+RelativeEncoder leftShootEncoder;
+RelativeEncoder rightShootEncoder;
+
+
 
   private static final String kShootAndDrive = "Shoot And Drive";
   private static final String kLeave = "Leave";
@@ -67,13 +70,18 @@ RelativeEncoder intakeEncoder;
     frontRightDriveMotor.restoreFactoryDefaults();
     backRightDriveMotor.restoreFactoryDefaults();
     backLeftDriveMotor.restoreFactoryDefaults();
-
     
+    leftShoot.restoreFactoryDefaults();
+    rightShoot.restoreFactoryDefaults();
+
+
     backLeftEncoder = backLeftDriveMotor.getEncoder(Type.kHallSensor, 42);
     backRightEncoder = backRightDriveMotor.getEncoder(Type.kHallSensor, 42);
     frontLeftEncoder = frontLeftDriveMotor.getEncoder(Type.kHallSensor, 42);
     frontRightEncoder = frontRightDriveMotor.getEncoder(Type.kHallSensor, 42);
 
+   rightShootEncoder = rightShoot.getEncoder(Type.kHallSensor, 42);
+   leftShootEncoder = leftShoot.getEncoder(Type.kHallSensor, 42);
 
 
     frontLeftEncoder.setPositionConversionFactor(Math.PI*6/8.45);
@@ -95,8 +103,14 @@ RelativeEncoder intakeEncoder;
     frontRightDriveMotor.setInverted(true);
     backRightDriveMotor.setInverted(true);
 
+    leftShoot.setInverted(false);
+    rightShoot.setInverted(true);
+
+
      frontRobotDrive = new DifferentialDrive(frontLeftDriveMotor::set,frontRightDriveMotor::set);
      backRobotDrive = new DifferentialDrive(backLeftDriveMotor::set,backRightDriveMotor::set);
+
+     
 
 
 
@@ -130,7 +144,6 @@ RelativeEncoder intakeEncoder;
     SmartDashboard.putNumber("Back Left Distance", backLeftEncoder.getPosition());
     SmartDashboard.putNumber("Back Right Distance", backRightEncoder.getPosition());
     
-    SmartDashboard.putNumber("Intake Position", intakeEncoder.getPosition());
 
   }
 
@@ -152,7 +165,6 @@ RelativeEncoder intakeEncoder;
        frontLeftEncoder.setPosition(0);
        frontRightEncoder.setPosition(0);
 
-       intakeEncoder.setPosition(0);
 
        
    
