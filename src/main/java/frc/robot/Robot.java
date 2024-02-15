@@ -34,8 +34,8 @@ public class Robot extends TimedRobot {
   CANSparkMax leftShoot = new CANSparkMax(5, MotorType.kBrushless);
   CANSparkMax rightShoot = new CANSparkMax(6, MotorType.kBrushless);
 
-  CANSparkMax intakeMotor1 = new CANSparkMax(7, MotorType.kBrushed);
-  CANSparkMax intakeMotor2 = new CANSparkMax(8, MotorType.kBrushed);
+  CANSparkMax leftIntakeMotor1 = new CANSparkMax(7, MotorType.kBrushed);
+  CANSparkMax rightIntakeMotor2 = new CANSparkMax(8, MotorType.kBrushed);
 
 
 
@@ -43,6 +43,8 @@ public class Robot extends TimedRobot {
   DifferentialDrive backRobotDrive;
 
   DifferentialDrive shootDrive;
+    DifferentialDrive intakeDrive;
+
 
 
   XboxController Controller1 = new XboxController(0);
@@ -113,11 +115,14 @@ RelativeEncoder rightShootEncoder;
     leftShoot.setInverted(false);
     rightShoot.setInverted(true);
 
+    leftIntakeMotor1.setInverted(false);
+    rightIntakeMotor2.setInverted(true);
+
 
      frontRobotDrive = new DifferentialDrive(frontLeftDriveMotor::set,frontRightDriveMotor::set);
      backRobotDrive = new DifferentialDrive(backLeftDriveMotor::set,backRightDriveMotor::set);
      shootDrive = new DifferentialDrive(leftShoot::set,rightShoot::set);
-     
+     intakeDrive = new DifferentialDrive(leftIntakeMotor1::set,rightIntakeMotor2::set);
 
 
 
