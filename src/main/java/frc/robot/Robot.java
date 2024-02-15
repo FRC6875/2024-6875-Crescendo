@@ -31,12 +31,16 @@ public class Robot extends TimedRobot {
   CANSparkMax frontRightDriveMotor = new CANSparkMax(2, MotorType.kBrushless);
   CANSparkMax backRightDriveMotor = new CANSparkMax(4, MotorType.kBrushless);
    
-CANSparkMax intakeMotor = new CANSparkMax(5, MotorType.kBrushless);
- 
+CANSparkMax intakeMotor1 = new CANSparkMax(5, MotorType.kBrushed);
+CANSparkMax intakeMotor2 = new CANSparkMax(6, MotorType.kBrushed);
+
+
   DifferentialDrive frontRobotDrive;
   DifferentialDrive backRobotDrive;
 
-  XboxController Controller = new XboxController(0);
+  XboxController Controller1 = new XboxController(0);
+    XboxController Controller2 = new XboxController(1);
+
   
 RelativeEncoder frontLeftEncoder;
 RelativeEncoder frontRightEncoder;
@@ -64,14 +68,12 @@ RelativeEncoder intakeEncoder;
     backRightDriveMotor.restoreFactoryDefaults();
     backLeftDriveMotor.restoreFactoryDefaults();
 
-    intakeMotor.restoreFactoryDefaults();
     
     backLeftEncoder = backLeftDriveMotor.getEncoder(Type.kHallSensor, 42);
     backRightEncoder = backRightDriveMotor.getEncoder(Type.kHallSensor, 42);
     frontLeftEncoder = frontLeftDriveMotor.getEncoder(Type.kHallSensor, 42);
     frontRightEncoder = frontRightDriveMotor.getEncoder(Type.kHallSensor, 42);
 
-    intakeEncoder = intakeMotor.getEncoder(Type.kHallSensor, 42);
 
 
     frontLeftEncoder.setPositionConversionFactor(Math.PI*6/8.45);
@@ -103,12 +105,12 @@ RelativeEncoder intakeEncoder;
   }
 
   private double getSpeed() {
-    if (Controller.getLeftY()<0){
-      return  -Controller.getLeftY()*Controller.getLeftY();
+    if (Controller1.getLeftY()<0){
+      return  -Controller1.getLeftY()*Controller1.getLeftY();
       
     }
    else {
-    return   Controller.getLeftY()*Controller.getLeftY();
+    return   Controller1.getLeftY()*Controller1.getLeftY();
    }
     
   }
@@ -198,9 +200,10 @@ RelativeEncoder intakeEncoder;
   @Override
   public void teleopPeriodic() {
   
-  frontRobotDrive.arcadeDrive(getSpeed(),Controller.getLeftX());
-  backRobotDrive.arcadeDrive(getSpeed(),Controller.getLeftX());
+  frontRobotDrive.arcadeDrive(getSpeed(),Controller1.getLeftX());
+  backRobotDrive.arcadeDrive(getSpeed(),Controller1.getLeftX());
 
+  
   
 }
   
