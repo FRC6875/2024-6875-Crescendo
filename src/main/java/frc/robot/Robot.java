@@ -33,11 +33,11 @@ public class Robot extends TimedRobot {
   CANSparkMax backRightDriveMotor = new CANSparkMax(4, MotorType.kBrushless);
    
   // declare shooter motors
-  CANSparkMax leftShoot = new CANSparkMax(5, MotorType.kBrushless);
-  CANSparkMax rightShoot = new CANSparkMax(6, MotorType.kBrushless);
+  CANSparkMax leftShoot = new CANSparkMax(7, MotorType.kBrushless);
+  CANSparkMax rightShoot = new CANSparkMax(8, MotorType.kBrushless);
 
-  CANSparkMax leftIntake = new CANSparkMax(7, MotorType.kBrushed);
-  CANSparkMax rightIntake = new CANSparkMax(8, MotorType.kBrushed);
+  CANSparkMax leftIntake = new CANSparkMax(5, MotorType.kBrushed);
+  CANSparkMax rightIntake = new CANSparkMax(6, MotorType.kBrushed);
 
 
   // delcare DifferentialDrive object
@@ -233,9 +233,13 @@ public class Robot extends TimedRobot {
   backRobotDrive.arcadeDrive(getSpeed(),Controller1.getLeftX());
 
   if (Controller2.getAButton()) {
-    shootDrive.tankDrive(0.1, 0.1,false);
+    shootDrive.tankDrive(0.1, 1,false);
   }
   
+  if (Controller2.getBButton()) {
+    intakeDrive.tankDrive(0.1, 1,false);
+    
+  }
 }
   
 
