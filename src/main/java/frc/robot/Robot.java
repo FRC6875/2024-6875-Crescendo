@@ -36,15 +36,15 @@ public class Robot extends TimedRobot {
   CANSparkMax leftShoot = new CANSparkMax(5, MotorType.kBrushless);
   CANSparkMax rightShoot = new CANSparkMax(6, MotorType.kBrushless);
 
-  CANSparkMax intakeMotor1 = new CANSparkMax(7, MotorType.kBrushed);
-  CANSparkMax intakeMotor2 = new CANSparkMax(8, MotorType.kBrushed);
+  CANSparkMax leftIntake = new CANSparkMax(7, MotorType.kBrushed);
+  CANSparkMax rightIntake = new CANSparkMax(8, MotorType.kBrushed);
 
 
   // delcare DifferentialDrive object
   DifferentialDrive frontRobotDrive;
   DifferentialDrive backRobotDrive;
   DifferentialDrive shootDrive;
-    DifferentialDrive intakeDrive;
+  DifferentialDrive intakeDrive;
 
 
 
@@ -117,15 +117,15 @@ public class Robot extends TimedRobot {
     leftShoot.setInverted(false);
     rightShoot.setInverted(true);
 
-    leftIntakeMotor1.setInverted(false);
-    rightIntakeMotor2.setInverted(true);
+    leftIntake.setInverted(false);
+    rightIntake.setInverted(true);
 
 
     // create differentia; drive objects 
      frontRobotDrive = new DifferentialDrive(frontLeftDriveMotor::set,frontRightDriveMotor::set);
      backRobotDrive = new DifferentialDrive(backLeftDriveMotor::set,backRightDriveMotor::set);
      shootDrive = new DifferentialDrive(leftShoot::set,rightShoot::set);
-     intakeDrive = new DifferentialDrive(leftIntakeMotor1::set,rightIntakeMotor2::set);
+     intakeDrive = new DifferentialDrive(leftIntake::set,rightIntake::set);
 
 
 
