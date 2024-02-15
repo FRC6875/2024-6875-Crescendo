@@ -34,6 +34,10 @@ public class Robot extends TimedRobot {
   CANSparkMax leftShoot = new CANSparkMax(5, MotorType.kBrushless);
   CANSparkMax rightShoot = new CANSparkMax(6, MotorType.kBrushless);
 
+  CANSparkMax intakeMotor1 = new CANSparkMax(7, MotorType.kBrushed);
+  CANSparkMax intakeMotor2 = new CANSparkMax(8, MotorType.kBrushed);
+
+
 
   DifferentialDrive frontRobotDrive;
   DifferentialDrive backRobotDrive;
@@ -132,6 +136,8 @@ RelativeEncoder rightShootEncoder;
     
   }
 
+
+
   /**
    * This function is called every 20 ms, no matter the mode. Use this for items like diagnostics
    * that you want ran during disabled, autonomous, teleoperated and test.
@@ -218,7 +224,9 @@ RelativeEncoder rightShootEncoder;
   frontRobotDrive.arcadeDrive(getSpeed(),Controller1.getLeftX());
   backRobotDrive.arcadeDrive(getSpeed(),Controller1.getLeftX());
 
-  
+  if (Controller2.getAButton()) {
+    shootDrive.tankDrive(0.1, 0.1,false);
+  }
   
 }
   
