@@ -26,41 +26,43 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 
 public class Robot extends TimedRobot {
+  // declare wheel motors
   CANSparkMax frontLeftDriveMotor = new CANSparkMax(1, MotorType.kBrushless);
   CANSparkMax backLeftDriveMotor = new CANSparkMax(3, MotorType.kBrushless);
   CANSparkMax frontRightDriveMotor = new CANSparkMax(2, MotorType.kBrushless);
   CANSparkMax backRightDriveMotor = new CANSparkMax(4, MotorType.kBrushless);
    
+  // declare shooter motors
   CANSparkMax leftShoot = new CANSparkMax(5, MotorType.kBrushless);
   CANSparkMax rightShoot = new CANSparkMax(6, MotorType.kBrushless);
 
-  CANSparkMax leftIntakeMotor1 = new CANSparkMax(7, MotorType.kBrushed);
-  CANSparkMax rightIntakeMotor2 = new CANSparkMax(8, MotorType.kBrushed);
+  CANSparkMax intakeMotor1 = new CANSparkMax(7, MotorType.kBrushed);
+  CANSparkMax intakeMotor2 = new CANSparkMax(8, MotorType.kBrushed);
 
 
-
+  // delcare DifferentialDrive object
   DifferentialDrive frontRobotDrive;
   DifferentialDrive backRobotDrive;
-
   DifferentialDrive shootDrive;
     DifferentialDrive intakeDrive;
 
 
 
-  XboxController Controller1 = new XboxController(0);
-    XboxController Controller2 = new XboxController(1);
-
-  
-RelativeEncoder frontLeftEncoder;
-RelativeEncoder frontRightEncoder;
-RelativeEncoder backLeftEncoder;
-RelativeEncoder backRightEncoder;
-
-RelativeEncoder leftShootEncoder;
-RelativeEncoder rightShootEncoder;
+  // delcare XboxControllers
+  XboxController Controller1 = new XboxController(0); //drive controller
+  XboxController Controller2 = new XboxController(1); //shoot/intake/actuator controller
 
 
+  //declare Encorders
+  RelativeEncoder frontLeftEncoder;
+  RelativeEncoder frontRightEncoder;
+  RelativeEncoder backLeftEncoder;
+  RelativeEncoder backRightEncoder;
+  RelativeEncoder leftShootEncoder;
+  RelativeEncoder rightShootEncoder;
 
+
+  //declare autonomous modes
   private static final String kShootAndDrive = "Shoot And Drive";
   private static final String kLeave = "Leave";
   private static final String kShootLeavePickup = "Shoot and drive pick up and stay";
@@ -75,29 +77,29 @@ RelativeEncoder rightShootEncoder;
   @Override
   public void robotInit() {
     
+    // initialize motors
     frontLeftDriveMotor.restoreFactoryDefaults();
     frontRightDriveMotor.restoreFactoryDefaults();
     backRightDriveMotor.restoreFactoryDefaults();
     backLeftDriveMotor.restoreFactoryDefaults();
-    
     leftShoot.restoreFactoryDefaults();
     rightShoot.restoreFactoryDefaults();
 
-
+    // initialize encoders
     backLeftEncoder = backLeftDriveMotor.getEncoder(Type.kHallSensor, 42);
     backRightEncoder = backRightDriveMotor.getEncoder(Type.kHallSensor, 42);
     frontLeftEncoder = frontLeftDriveMotor.getEncoder(Type.kHallSensor, 42);
     frontRightEncoder = frontRightDriveMotor.getEncoder(Type.kHallSensor, 42);
+    rightShootEncoder = rightShoot.getEncoder(Type.kHallSensor, 42);
+    leftShootEncoder = leftShoot.getEncoder(Type.kHallSensor, 42);
 
-   rightShootEncoder = rightShoot.getEncoder(Type.kHallSensor, 42);
-   leftShootEncoder = leftShoot.getEncoder(Type.kHallSensor, 42);
-
-
+    // set for the wheel motors as we want to know the positions
     frontLeftEncoder.setPositionConversionFactor(Math.PI*6/8.45);
     frontRightEncoder.setPositionConversionFactor(Math.PI*6/8.45);
     backLeftEncoder.setPositionConversionFactor(Math.PI*6/8.45);
     backRightEncoder.setPositionConversionFactor(Math.PI*6/8.45);
 
+    // set autonomous mode names
     m_chooser.setDefaultOption("Leave Auto", kLeave);
     m_chooser.addOption("Shoot and Leave", kShootAndDrive);
     m_chooser.addOption("Shoot and drive pick up and stay", kShootLeavePickup);
@@ -107,11 +109,11 @@ RelativeEncoder rightShootEncoder;
     CameraServer.startAutomaticCapture();
     CameraServer.startAutomaticCapture();
 
+    // set motor inversion (may not have to do this - test without it later)
     frontLeftDriveMotor.setInverted(false);
     backLeftDriveMotor.setInverted(false);
     frontRightDriveMotor.setInverted(true);
     backRightDriveMotor.setInverted(true);
-
     leftShoot.setInverted(false);
     rightShoot.setInverted(true);
 
@@ -119,6 +121,7 @@ RelativeEncoder rightShootEncoder;
     rightIntakeMotor2.setInverted(true);
 
 
+    // create differentia; drive objects 
      frontRobotDrive = new DifferentialDrive(frontLeftDriveMotor::set,frontRightDriveMotor::set);
      backRobotDrive = new DifferentialDrive(backLeftDriveMotor::set,backRightDriveMotor::set);
      shootDrive = new DifferentialDrive(leftShoot::set,rightShoot::set);
@@ -129,7 +132,7 @@ RelativeEncoder rightShootEncoder;
 
 
   }
-
+  // get speed for drive motors
   private double getSpeed() {
     if (Controller1.getLeftY()<0){
       return  -Controller1.getLeftY()*Controller1.getLeftY();
@@ -152,7 +155,7 @@ RelativeEncoder rightShootEncoder;
    */
   @Override
   public void robotPeriodic() {
-    
+    // display positions on SmartDashboard
     SmartDashboard.putNumber("Front Left Distance", frontLeftEncoder.getPosition());
     SmartDashboard.putNumber("Front Right Distance", frontRightEncoder.getPosition());
     SmartDashboard.putNumber("Back Left Distance", backLeftEncoder.getPosition());
