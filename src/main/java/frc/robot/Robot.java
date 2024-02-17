@@ -16,6 +16,8 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.Servo;
+
 
 
 /**
@@ -39,8 +41,12 @@ public class Robot extends TimedRobot {
   CANSparkMax leftIntake = new CANSparkMax(5, MotorType.kBrushed);
   CANSparkMax rightIntake = new CANSparkMax(6, MotorType.kBrushed);
 
+//declare actuators
+Servo actuator1 = new Servo(0);
+Servo actuator2 = new Servo(1);
 
-  // delcare DifferentialDrive object
+
+// delcare DifferentialDrive object
   DifferentialDrive frontRobotDrive;
   DifferentialDrive backRobotDrive;
   DifferentialDrive shootDrive;
@@ -76,7 +82,13 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
+    actuator1.setBoundsMicroseconds(2000, 0, 1500, 0, 0);
+    actuator2.setBoundsMicroseconds(2000, 0, 1500, 0, 0);
+
     
+
+
+
     // initialize motors
     frontLeftDriveMotor.restoreFactoryDefaults();
     frontRightDriveMotor.restoreFactoryDefaults();
@@ -238,10 +250,21 @@ public class Robot extends TimedRobot {
   
   if (Controller2.getBButton()) {
     intakeDrive.tankDrive(0.1, 1,false);
-    
   }
-}
+  if (Controller2.getXButton()) {
+    actuator1.setSpeed(0.95);
+    actuator2.setSpeed(0.95);
+
+
+  }
+  if (Controller2.getYButton()) {
+    actuator1.setSpeed(0.05);
+    actuator2.setSpeed(0.05);
+
+  }
+  }
   
+
 
   /** This function is called once when the robot is disabled. */
   @Override
