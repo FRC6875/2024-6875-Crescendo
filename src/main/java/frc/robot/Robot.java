@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Servo;
 
 
@@ -35,18 +36,20 @@ public class Robot extends TimedRobot {
   CANSparkMax backRightDriveMotor = new CANSparkMax(4, MotorType.kBrushless);
    
   // declare shooter motors
-  CANSparkMax leftShoot = new CANSparkMax(7, MotorType.kBrushless);
-  CANSparkMax rightShoot = new CANSparkMax(8, MotorType.kBrushless);
+  CANSparkMax leftShoot = new CANSparkMax(5, MotorType.kBrushless);
+  CANSparkMax rightShoot = new CANSparkMax(6, MotorType.kBrushless);
 
-  CANSparkMax leftIntake = new CANSparkMax(5, MotorType.kBrushed);
-  CANSparkMax rightIntake = new CANSparkMax(6, MotorType.kBrushed);
+  CANSparkMax leftIntake = new CANSparkMax(7, MotorType.kBrushless);//Shoud be brushed
+  CANSparkMax rightIntake = new CANSparkMax(8, MotorType.kBrushless);//Shoud be brushed
 
-//declare actuators
-Servo actuator1 = new Servo(0);
-Servo actuator2 = new Servo(1);
+  //declare actuators
+  Servo actuator1 = new Servo(0);
+  Servo actuator2 = new Servo(1);
 
+  //declare input sensor
+DigitalInput shootSensor = new DigitalInput(0);
 
-// delcare DifferentialDrive object
+  // declare DifferentialDrive object
   DifferentialDrive frontRobotDrive;
   DifferentialDrive backRobotDrive;
   DifferentialDrive shootDrive;
@@ -54,7 +57,7 @@ Servo actuator2 = new Servo(1);
 
 
 
-  // delcare XboxControllers
+  // declare XboxControllers
   XboxController Controller1 = new XboxController(0); //drive controller
   XboxController Controller2 = new XboxController(1); //shoot/intake/actuator controller
 
@@ -73,8 +76,9 @@ Servo actuator2 = new Servo(1);
   private static final String kLeave = "Leave";
   private static final String kShootLeavePickup = "Shoot and drive pick up and stay";
   private static final String kSitAndDoNothing = "Do nothing";
-  private String m_autoSelected;
+  private String m_autoSelected; // selection options
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
+
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -82,11 +86,10 @@ Servo actuator2 = new Servo(1);
    */
   @Override
   public void robotInit() {
+
+    //initialize actuators
     actuator1.setBoundsMicroseconds(2000, 0, 1500, 0, 0);
     actuator2.setBoundsMicroseconds(2000, 0, 1500, 0, 0);
-
-    
-
 
 
     // initialize motors
@@ -106,6 +109,7 @@ Servo actuator2 = new Servo(1);
     leftShootEncoder = leftShoot.getEncoder(Type.kHallSensor, 42);
 
     // set for the wheel motors as we want to know the positions
+    //  PI * WheelDiameter / GearRatio --WheelDiameter is in inches
     frontLeftEncoder.setPositionConversionFactor(Math.PI*6/8.45);
     frontRightEncoder.setPositionConversionFactor(Math.PI*6/8.45);
     backLeftEncoder.setPositionConversionFactor(Math.PI*6/8.45);
@@ -128,19 +132,15 @@ Servo actuator2 = new Servo(1);
     backRightDriveMotor.setInverted(true);
     leftShoot.setInverted(false);
     rightShoot.setInverted(true);
-
     leftIntake.setInverted(false);
     rightIntake.setInverted(true);
 
 
-    // create differentia; drive objects 
+    // create differential drive objects 
      frontRobotDrive = new DifferentialDrive(frontLeftDriveMotor::set,frontRightDriveMotor::set);
      backRobotDrive = new DifferentialDrive(backLeftDriveMotor::set,backRightDriveMotor::set);
      shootDrive = new DifferentialDrive(leftShoot::set,rightShoot::set);
      intakeDrive = new DifferentialDrive(leftIntake::set,rightIntake::set);
-
-
-
 
 
   }
@@ -172,8 +172,8 @@ Servo actuator2 = new Servo(1);
     SmartDashboard.putNumber("Front Right Distance", frontRightEncoder.getPosition());
     SmartDashboard.putNumber("Back Left Distance", backLeftEncoder.getPosition());
     SmartDashboard.putNumber("Back Right Distance", backRightEncoder.getPosition());
-    
-
+    SmartDashboard.putBoolean("Shoot Sensor",shootSensor.get());
+ 
   }
 
   /**
@@ -189,10 +189,10 @@ Servo actuator2 = new Servo(1);
   @Override
   public void autonomousInit() {
        
-       backLeftEncoder.setPosition(0);
-       backRightEncoder.setPosition(0);
-       frontLeftEncoder.setPosition(0);
-       frontRightEncoder.setPosition(0);
+    backLeftEncoder.setPosition(0);
+    backRightEncoder.setPosition(0);
+    frontLeftEncoder.setPosition(0);
+    frontRightEncoder.setPosition(0);
 
 
        
@@ -207,6 +207,15 @@ Servo actuator2 = new Servo(1);
   public void autonomousPeriodic() {
     switch (m_autoSelected) {
       case kShootAndDrive:
+      if (shootSensor.get()){ //note is in shooter
+      shootDrive.tankDrive(0.5,0.5); //shoot
+      }
+      else { // note has been shot 
+         if ((frontRightEncoder.getPosition()<80)&&(frontLeftEncoder.getPosition()<80)&&(backRightEncoder.getPosition()<80)&&(backLeftEncoder.getPosition()<80)) {
+          frontRobotDrive.arcadeDrive (0.5,0);
+          backRobotDrive.arcadeDrive (0.5,0);
+      }
+    }
         // Put custom auto code here
         break;
       case kLeave:
