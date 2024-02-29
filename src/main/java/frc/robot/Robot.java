@@ -75,6 +75,7 @@ DigitalInput shootSensor = new DigitalInput(0);
   private static final String kShootAndDrive = "Shoot And Drive";
   private static final String kLeave = "Leave";
   private static final String kShootLeavePickup = "Shoot and drive pick up and stay";
+  private static final String kShootLeaveTurnRed= "Shoot Leave Red Alliance Closest to the amp";
   private static final String kSitAndDoNothing = "Do nothing";
   private String m_autoSelected; // selection options
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
@@ -120,6 +121,7 @@ DigitalInput shootSensor = new DigitalInput(0);
     m_chooser.addOption("Shoot and Leave", kShootAndDrive);
     m_chooser.addOption("Shoot and drive pick up and stay", kShootLeavePickup);
     m_chooser.addOption("Do nothing", kSitAndDoNothing);
+    m_chooser.addOption("Shoot Leave Red Alliance closest to the amp",kShootLeaveTurnRed);
     SmartDashboard.putData("Auto choices", m_chooser);
    
     CameraServer.startAutomaticCapture();
@@ -207,6 +209,8 @@ DigitalInput shootSensor = new DigitalInput(0);
   public void autonomousPeriodic() {
     switch (m_autoSelected) {
       case kShootAndDrive:
+      // may need to modify depending where note is loaded.
+      //if loaded in intake - will need to push note up using actuators, then shoot, then drive.
       if (shootSensor.get()){ //note is in shooter
       shootDrive.tankDrive(0.5,0.5); //shoot
       }
@@ -235,6 +239,11 @@ DigitalInput shootSensor = new DigitalInput(0);
       break;
 
       case kSitAndDoNothing:
+    
+      break;
+
+      case kShootLeaveTurnRed:
+      
       break;
 
       default:
