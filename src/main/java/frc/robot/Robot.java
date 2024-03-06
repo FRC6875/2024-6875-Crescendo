@@ -132,7 +132,7 @@ public class Robot extends TimedRobot {
     CameraServer.startAutomaticCapture();
 
     // set motor inversion (may not have to do this - test without it later)
-    frontLeftDriveMotor.setInverted(false);
+    // frontLeftDriveMotor.setInverted(false);
     backLeftDriveMotor.setInverted(false);
     // frontRightDriveMotor.setInverted(true);
     // backRightDriveMotor.setInverted(true);
@@ -144,12 +144,13 @@ public class Robot extends TimedRobot {
 
 
     // create differential drive objects 
+
     //  frontRobotDrive = new DifferentialDrive(frontLeftDriveMotor::set,frontRightDriveMotor::set);
     //  backRobotDrive = new DifferentialDrive(backLeftDriveMotor::set,backRightDriveMotor::set);
-    robotDrive = new DifferentialDrive(backLeftDriveMotor::set,backRightDriveMotor::set);
-    
-     shootDrive = new DifferentialDrive(leftShoot::set,rightShoot::set);
-     intakeDrive = new DifferentialDrive(leftIntake::set,rightIntake::set);
+    robotDrive = new DifferentialDrive(backLeftDriveMotor::set,backRightDriveMotor::set); //all motors connected
+
+    shootDrive = new DifferentialDrive(leftShoot::set,rightShoot::set);
+    intakeDrive = new DifferentialDrive(leftIntake::set,rightIntake::set);
 
 
   }
@@ -259,8 +260,9 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
   
-  frontRobotDrive.arcadeDrive(getSpeed(),Controller1.getLeftX());
-  backRobotDrive.arcadeDrive(getSpeed(),Controller1.getLeftX());
+  // frontRobotDrive.arcadeDrive(getSpeed(),Controller1.getLeftX());
+  // backRobotDrive.arcadeDrive(getSpeed(),Controller1.getLeftX());
+  robotDrive.arcadeDrive(getSpeed(),Controller1.getLeftX());
 
   if (Controller2.getAButton()) {
     shootDrive.tankDrive(0.1, 1,false);
