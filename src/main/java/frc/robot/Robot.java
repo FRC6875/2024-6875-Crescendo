@@ -252,57 +252,58 @@ public class Robot extends TimedRobot {
     m_autoSelected = m_chooser.getSelected();
     // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
     System.out.println("Auto selected: " + m_autoSelected);
-  }
-//d
-  /** This function is called periodically during autonomous. */
-  @Override
-  public void autonomousPeriodic() {
+
     switch (m_autoSelected) {
-      case kShootAndDrive:
+
+      case kShootAndDrive: 
       // may need to modify depending where note is loaded.
       //if loaded in intake - will need to push note up using actuators, then shoot, then drive.
       if (shootSensor.get()){ //note is in shooter
-      shootDrive.tankDrive(0.5,0.5); //shoot
+        shootDrive.arcadeDrive(0.9, 0); //shoot at 0.9 speed (change speed accordingly)
       }
-      else { // note has been shot 
-         if ((frontRightEncoder.getPosition()<80)&&(frontLeftEncoder.getPosition()<80)&&(backRightEncoder.getPosition()<80)&&(backLeftEncoder.getPosition()<80)) {
-          frontRobotDrive.arcadeDrive (0.5,0);
-          backRobotDrive.arcadeDrive (0.5,0);
+      else { // note has been shot (sensor not sensing note anymore)
+        driveDistance(0.5,24); // input is speed, target distance (in)
       }
-    }
-        // Put custom auto code here
-        break;
-      case kLeave:
-        if ((frontRightEncoder.getPosition()<80)&&(frontLeftEncoder.getPosition()<80)&&(backRightEncoder.getPosition()<80)&&(backLeftEncoder.getPosition()<80)) {
-      //  frontRobotDrive.arcadeDrive (0.5,0);
-      //  backRobotDrive.arcadeDrive (0.5,0);
-       robotDrive.arcadeDrive (0.5,0);
-       robot.turnInPlace (0.5,0.5)
-      
+      break; // end kShootAndDrive
+
+
+      case kLeave: // robot only drives forward
+
+      //   if ((frontRightEncoder.getPosition()<80)&&(frontLeftEncoder.getPosition()<80)&&(backRightEncoder.getPosition()<80)&&(backLeftEncoder.getPosition()<80)) {
+      // //  frontRobotDrive.arcadeDrive (0.5,0);
+      // //  backRobotDrive.arcadeDrive (0.5,0);
+      // the above 'if' only really applies to auto periodic
+
+       driveDistance(0.5,12); // input is speed, target distance (in)
         
-       }
-       else {
-         
-       frontRobotDrive.arcadeDrive (0,0);
-       backRobotDrive.arcadeDrive (0,0);
-       }
-      break;
+      break; // end kLeave
 
       case kShootLeavePickup:
+        //shoot
+        //drivedistance
+        //turnInPlace if needed
+        //pickup
+        
       break;
 
       case kSitAndDoNothing:
-    
+        //done!
       break;
 
       case kShootLeaveTurnRed:
-      
+        //turn red?
       break;
 
       default:
         break;
     }
   }
+//d
+  /** This function is called periodically during autonomous. */
+  // @Override
+  // public void autonomousPeriodic() {
+    
+  // } // we are no longer using this, and instead putting our cases in Auto Init above
 
   /** This function is called once when teleop is enabled. */
   @Override
