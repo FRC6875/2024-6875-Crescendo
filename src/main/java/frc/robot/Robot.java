@@ -249,13 +249,14 @@ public class Robot extends TimedRobot {
     frontRightEncoder.setPosition(0);
 
 
-       
+      
+
    
     m_autoSelected = m_chooser.getSelected();
     // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
     System.out.println("Auto selected: " + m_autoSelected);
   }
-
+//d
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
