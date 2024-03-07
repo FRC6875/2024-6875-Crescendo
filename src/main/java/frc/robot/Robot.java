@@ -18,6 +18,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Servo;
+import com.kauailabs.navx.frc;
+import java.lang.Math;
 
 
 
@@ -54,6 +56,9 @@ public class Robot extends TimedRobot {
   DifferentialDrive backRobotDrive;
   DifferentialDrive shootDrive;
   DifferentialDrive intakeDrive;
+
+  // delcare gyro
+  AHRS gyro = new AHRS(SPI.Port.kMXP);
 
 
 
@@ -138,7 +143,7 @@ public class Robot extends TimedRobot {
     backLeftDriveMotor.setInverted(false);
     // frontRightDriveMotor.setInverted(true);
     // backRightDriveMotor.setInverted(true);
-    backRightDriveMotor.setInverted(true);
+    backRightDriveMotor.setInverted(true); // have to do seperate for each motor
     leftShoot.setInverted(false);
     rightShoot.setInverted(true);
     leftIntake.setInverted(false);
@@ -149,23 +154,59 @@ public class Robot extends TimedRobot {
 
     //  frontRobotDrive = new DifferentialDrive(frontLeftDriveMotor::set,frontRightDriveMotor::set);
     //  backRobotDrive = new DifferentialDrive(backLeftDriveMotor::set,backRightDriveMotor::set);
-    robotDrive = new DifferentialDrive(backLeftDriveMotor::set,backRightDriveMotor::set); //all motors connected
+    robotDrive = new DifferentialDrive(backLeftDriveMotor,backRightDriveMotor); //all motors connected
 
     shootDrive = new DifferentialDrive(leftShoot::set,rightShoot::set);
     intakeDrive = new DifferentialDrive(leftIntake::set,rightIntake::set);
-
+    // instead just make a method to just set the speed
 
   }
-  // get speed for drive motors
+  // get speed for drive motors -- not necessary, dependso m how you're moving your joystick
   private double getSpeed() {
-    if (Controller1.getLeftY()<0){
-      return  -Controller1.getLeftY()*Controller1.getLeftY();
+  //   if (Controller1.getLeftY()<0){
+  //     return  -Controller1.getLeftY()*Controller1.getLeftY();
+      
+  //   }
+  //  else {
+  //   return   Controller1.getLeftY()*Controller1.getLeftY();
+  //  }
+
+    if (Controller1.getLeftY()<=-0.8){
+      return  -1;
       
     }
+    else if (Controller1.getLeftY()>=0.8) {
+      return 1;
+    }
    else {
-    return   Controller1.getLeftY()*Controller1.getLeftY();
+    return Controller1.getLeftY();
    }
     
+  }
+
+  private void turnInPlace(double targetAngle, double rotation) {
+    double direction; // in NavX, clockwise is positive??
+    // dont mount NavX backwards!!!
+    if ( (gyro.getAngle()) < targetAngle ) {
+      direction = 1;
+
+    }
+    else if ( (gyro.getAngle()) > targetAngle ) {
+      direction = -1;
+    }
+    // gives room for error, tolerance range
+    while (Math.abs((gyro.getAngle() - targetAngle )) >= 5) { // as your angles get closer, the difference gets smaller. 5 is a tolerance, 5 degrees
+      robotDrive.arcadeDrive(0,rotation*direction);
+    }
+    robotDrive.arcadeDrive(0,0); // if you don't change the value, it will keep running on the last value given
+  }
+
+  private void driveDistance(double speed, double targetDistance){
+    frontRightEncoder.setPosition(0);
+    while (Math.abs(frontRightEncoder.getPosition()) < Math.abs(targetDistance) ) {
+      robotDrive.arcadeDrive(speed,0);
+    }
+    robotDrive.arcadeDrive(0,0);
   }
 
 
@@ -234,8 +275,11 @@ public class Robot extends TimedRobot {
         break;
       case kLeave:
         if ((frontRightEncoder.getPosition()<80)&&(frontLeftEncoder.getPosition()<80)&&(backRightEncoder.getPosition()<80)&&(backLeftEncoder.getPosition()<80)) {
-       frontRobotDrive.arcadeDrive (0.5,0);
-       backRobotDrive.arcadeDrive (0.5,0);
+      //  frontRobotDrive.arcadeDrive (0.5,0);
+      //  backRobotDrive.arcadeDrive (0.5,0);
+       robotDrive.arcadeDrive (0.5,0);
+       robot.turnInPlace (0.5,0.5)
+      
         
        }
        else {
@@ -271,7 +315,9 @@ public class Robot extends TimedRobot {
   
   // frontRobotDrive.arcadeDrive(getSpeed(),Controller1.getLeftX());
   // backRobotDrive.arcadeDrive(getSpeed(),Controller1.getLeftX());
-  robotDrive.arcadeDrive(getSpeed(),Controller1.getLeftX());
+  robotDrive.arcadeDrive(getSpeed(),Controller1.getLeftX()); // getSpeed()-getleftY
+  // multiple either one by a decimal to slow down
+  
 
   if (Controller2.getAButton()) {
     shootDrive.tankDrive(0.1, 1,false);
