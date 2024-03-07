@@ -159,7 +159,7 @@ public class Robot extends TimedRobot {
     shootDrive = new DifferentialDrive(leftShoot::set,rightShoot::set);
     intakeDrive = new DifferentialDrive(leftIntake::set,rightIntake::set);
     // instead just make a method to just set the speed
-    
+    /
 
   }
   // get speed for drive motors -- not necessary, dependso m how you're moving your joystick
@@ -248,9 +248,6 @@ public class Robot extends TimedRobot {
     frontLeftEncoder.setPosition(0);
     frontRightEncoder.setPosition(0);
 
-
-      
-
    
     m_autoSelected = m_chooser.getSelected();
     // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
@@ -317,12 +314,12 @@ public class Robot extends TimedRobot {
   
   // frontRobotDrive.arcadeDrive(getSpeed(),Controller1.getLeftX());
   // backRobotDrive.arcadeDrive(getSpeed(),Controller1.getLeftX());
-  robotDrive.arcadeDrive(getSpeed(),Controller1.getLeftX()); // getSpeed()-getleftY
+  robotDrive.arcadeDrive(getSpeed(),Controller1.getLeftX()); // getSpeed()-getleftY instead of
   // multiple either one by a decimal to slow down
   
 
   if (Controller2.getAButton()) {
-    shootDrive.tankDrive(0.1, 1,false);
+    shootDrive.arcadeDrive(0.9, 0); //shoot at 0.9 speed (change speed accoridngly)
   }
   
   if (Controller2.getBButton()) {
