@@ -159,6 +159,7 @@ public class Robot extends TimedRobot {
     shootDrive = new DifferentialDrive(leftShoot::set,rightShoot::set);
     intakeDrive = new DifferentialDrive(leftIntake::set,rightIntake::set);
     // instead just make a method to just set the speed
+    
 
   }
   // get speed for drive motors -- not necessary, dependso m how you're moving your joystick
