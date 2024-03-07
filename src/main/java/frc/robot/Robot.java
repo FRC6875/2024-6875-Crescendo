@@ -47,7 +47,7 @@ public class Robot extends TimedRobot {
   Servo actuator2 = new Servo(1);
 
   //declare input sensor
-DigitalInput shootSensor = new DigitalInput(0);
+  DigitalInput shootSensor = new DigitalInput(0);
 
   // declare DifferentialDrive object
   DifferentialDrive frontRobotDrive;
@@ -123,14 +123,21 @@ DigitalInput shootSensor = new DigitalInput(0);
     m_chooser.addOption("Do nothing", kSitAndDoNothing);
     m_chooser.addOption("Shoot Leave Red Alliance closest to the amp",kShootLeaveTurnRed);
     SmartDashboard.putData("Auto choices", m_chooser);
-   
+
+    // set leader/followers - this connects the front and back motors to drive together
+    backLeftDriveMotor.follow(frontLeftDriveMotor);
+    backRightDriveMotor.follow(frontRightDriveMotor);
+
+
+
     CameraServer.startAutomaticCapture();
     CameraServer.startAutomaticCapture();
 
     // set motor inversion (may not have to do this - test without it later)
-    frontLeftDriveMotor.setInverted(false);
+    // frontLeftDriveMotor.setInverted(false);
     backLeftDriveMotor.setInverted(false);
-    frontRightDriveMotor.setInverted(true);
+    // frontRightDriveMotor.setInverted(true);
+    // backRightDriveMotor.setInverted(true);
     backRightDriveMotor.setInverted(true);
     leftShoot.setInverted(false);
     rightShoot.setInverted(true);
@@ -139,10 +146,13 @@ DigitalInput shootSensor = new DigitalInput(0);
 
 
     // create differential drive objects 
-     frontRobotDrive = new DifferentialDrive(frontLeftDriveMotor::set,frontRightDriveMotor::set);
-     backRobotDrive = new DifferentialDrive(backLeftDriveMotor::set,backRightDriveMotor::set);
-     shootDrive = new DifferentialDrive(leftShoot::set,rightShoot::set);
-     intakeDrive = new DifferentialDrive(leftIntake::set,rightIntake::set);
+
+    //  frontRobotDrive = new DifferentialDrive(frontLeftDriveMotor::set,frontRightDriveMotor::set);
+    //  backRobotDrive = new DifferentialDrive(backLeftDriveMotor::set,backRightDriveMotor::set);
+    robotDrive = new DifferentialDrive(backLeftDriveMotor::set,backRightDriveMotor::set); //all motors connected
+
+    shootDrive = new DifferentialDrive(leftShoot::set,rightShoot::set);
+    intakeDrive = new DifferentialDrive(leftIntake::set,rightIntake::set);
 
 
   }
@@ -259,8 +269,9 @@ DigitalInput shootSensor = new DigitalInput(0);
   @Override
   public void teleopPeriodic() {
   
-  frontRobotDrive.arcadeDrive(getSpeed(),Controller1.getLeftX());
-  backRobotDrive.arcadeDrive(getSpeed(),Controller1.getLeftX());
+  // frontRobotDrive.arcadeDrive(getSpeed(),Controller1.getLeftX());
+  // backRobotDrive.arcadeDrive(getSpeed(),Controller1.getLeftX());
+  robotDrive.arcadeDrive(getSpeed(),Controller1.getLeftX());
 
   if (Controller2.getAButton()) {
     shootDrive.tankDrive(0.1, 1,false);
