@@ -317,20 +317,20 @@ public class Robot extends TimedRobot {
   robotDrive.arcadeDrive(getSpeed(),Controller1.getLeftX()); // getSpeed()-getleftY instead of
   // multiple either one by a decimal to slow down
   
-
+  // Shoot - A button
   if (Controller2.getAButton()) {
     shootDrive.arcadeDrive(0.9, 0); //shoot at 0.9 speed (change speed accoridngly)
   }
-  
+  // Intake - B button
   if (Controller2.getBButton()) {
-    intakeDrive.tankDrive(0.1, 1,false);
+    intakeDrive.arcadeDrive(0.1, 0); //intake at 0.1 speed (change speed accoridngly)
   }
+  // actuators - X button
   if (Controller2.getXButton()) {
     actuator1.setSpeed(0.95);
     actuator2.setSpeed(0.95);
-
-
   }
+  // actuators - Y button
   if (Controller2.getYButton()) {
     actuator1.setSpeed(0.05);
     actuator2.setSpeed(0.05);
