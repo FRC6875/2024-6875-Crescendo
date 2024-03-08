@@ -57,6 +57,7 @@ public class Robot extends TimedRobot {
   DifferentialDrive backRobotDrive;
   DifferentialDrive shootDrive;
   DifferentialDrive intakeDrive;
+  DifferentialDrive robotDrive;
 
   // delcare gyro
   AHRS gyro = new AHRS(SPI.Port.kMXP);
@@ -188,7 +189,7 @@ public class Robot extends TimedRobot {
   }
 
   private void turnInPlace(double targetAngle, double rotation) {
-    double direction; // in NavX, clockwise is positive??
+    double direction = 1; // in NavX, clockwise is positive??
     // dont mount NavX backwards!!!
     if ( (gyro.getAngle()) < targetAngle ) {
       direction = 1;
