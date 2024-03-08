@@ -165,24 +165,24 @@ public class Robot extends TimedRobot {
   }
   // get speed for drive motors -- not necessary, dependso m how you're moving your joystick
   private double getSpeed() {
-  //   if (Controller1.getLeftY()<0){
-  //     return  -Controller1.getLeftY()*Controller1.getLeftY();
+    if (Controller1.getLeftY()<0){
+      return  -Controller1.getLeftY()*Controller1.getLeftY();
       
-  //   }
-  //  else {
-  //   return   Controller1.getLeftY()*Controller1.getLeftY();
-  //  }
-
-    if (Controller1.getLeftY()<=-0.8){
-      return  -1;
-      
-    }
-    else if (Controller1.getLeftY()>=0.8) {
-      return 1;
     }
    else {
-    return Controller1.getLeftY();
+    return   Controller1.getLeftY()*Controller1.getLeftY();
    }
+
+  //   if (Controller1.getLeftY()<=-0.8){
+  //     return  -1;
+      
+  //   }
+  //   else if (Controller1.getLeftY()>=0.8) {
+  //     return 1;
+  //   }
+  //  else {
+  //   return Controller1.getLeftY();
+  //  }
     
   }
 
