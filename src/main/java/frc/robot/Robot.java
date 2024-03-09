@@ -141,11 +141,10 @@ public class Robot extends TimedRobot {
     // CameraServer.startAutomaticCapture();
 
     // set motor inversion (may not have to do this - test without it later)
-    // frontLeftDriveMotor.setInverted(false);
-    backLeftDriveMotor.setInverted(false);
-    // frontRightDriveMotor.setInverted(true);
-    // backRightDriveMotor.setInverted(true);
-    backRightDriveMotor.setInverted(true); // have to do seperate for each motor
+    frontLeftDriveMotor.setInverted(true);
+    backLeftDriveMotor.setInverted(true);
+    frontRightDriveMotor.setInverted(false);
+    backRightDriveMotor.setInverted(false); // have to do seperate for each motor
     leftShoot.setInverted(false);
     rightShoot.setInverted(true);
     leftIntake.setInverted(false);
@@ -157,7 +156,7 @@ public class Robot extends TimedRobot {
 
     //  frontRobotDrive = new DifferentialDrive(frontLeftDriveMotor::set,frontRightDriveMotor::set);
     //  backRobotDrive = new DifferentialDrive(backLeftDriveMotor::set,backRightDriveMotor::set);
-    robotDrive = new DifferentialDrive(backLeftDriveMotor,backRightDriveMotor); //all motors connected
+    robotDrive = new DifferentialDrive(frontLeftDriveMotor,frontRightDriveMotor); //all motors connected
 
     shootDrive = new DifferentialDrive(leftShoot,rightShoot);
     intakeDrive = new DifferentialDrive(leftIntake,rightIntake);
@@ -201,15 +200,16 @@ public class Robot extends TimedRobot {
     while (Math.abs((gyro.getAngle() - targetAngle )) >= 5) { // as your angles get closer, the difference gets smaller. 5 is a tolerance, 5 degrees of error
       robotDrive.arcadeDrive(0,rotation*direction);
     }
-    robotDrive.arcadeDrive(0,0); // if you don't change the value, it will keep running on the last value given -- test to see if this is true though
+    // robotDrive.arcadeDrive(0,0); causes an error // if you don't change the value, it will keep running on the last value given -- test to see if this is true though
   }
 
-  private void driveDistance(double speed, double targetDistance){
+  private int driveDistance(double speed, double targetDistance){
     frontRightEncoder.setPosition(0); // always initialize encoder position to 0
     while (Math.abs(frontRightEncoder.getPosition()) < Math.abs(targetDistance) ) { //while the encoder (starting at 0 distance) is less than the target distance
       robotDrive.arcadeDrive(speed,0); // drive forward at given speed
     }
-    robotDrive.arcadeDrive(0,0); // when the encoder distance is the same or greater than the target distance, stop
+    return 1;
+    // robotDrive.arcadeDrive(0,0); // cases an error
   } // may need to add room for error as in turnInPlace
 
 
@@ -275,9 +275,10 @@ public class Robot extends TimedRobot {
       // //  frontRobotDrive.arcadeDrive (0.5,0);
       // //  backRobotDrive.arcadeDrive (0.5,0);
       // the above 'if' only really applies to auto periodic
-
-       driveDistance(0.5,12); // input is speed, target distance (in)
-        
+    //  robotDrive.arcadeDrive(0,0);
+       driveDistance(0.2,12); // input is speed, target distance (in)
+       turnInPlace(45,0.2);
+       
       break; // end kLeave
 
       case kShootLeavePickup:
@@ -298,7 +299,7 @@ public class Robot extends TimedRobot {
 
       default:
         break;
-    }
+      }
   }
 //d
   /** This function is called periodically during autonomous. */
@@ -318,6 +319,7 @@ public class Robot extends TimedRobot {
   // frontRobotDrive.arcadeDrive(getSpeed(),Controller1.getLeftX());
   // backRobotDrive.arcadeDrive(getSpeed(),Controller1.getLeftX());
   robotDrive.arcadeDrive(getSpeed(),Controller1.getLeftX()); // getSpeed()-getleftY instead of
+  // robotDrive.arcadeDrive(Controller1.getLeftY(),Controller1.getLeftX());
   // multiple either one by a decimal to slow down
   
   // Shoot - A button
