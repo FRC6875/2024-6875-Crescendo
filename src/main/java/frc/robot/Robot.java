@@ -8,6 +8,7 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkRelativeEncoder.Type;
+import com.revrobotics.REVLibError;
 
 
 import edu.wpi.first.cameraserver.CameraServer;
@@ -149,6 +150,7 @@ public class Robot extends TimedRobot {
     rightShoot.setInverted(true);
     leftIntake.setInverted(false);
     rightIntake.setInverted(true);
+    
 
 
     // create differential drive objects 
@@ -162,6 +164,7 @@ public class Robot extends TimedRobot {
     intakeDrive = new DifferentialDrive(leftIntake,rightIntake);
     // instead just make a method to just set the speed
     
+   
 
   }
   // get speed for drive motors -- not necessary, dependso m how you're moving your joystick
@@ -203,12 +206,13 @@ public class Robot extends TimedRobot {
     // robotDrive.arcadeDrive(0,0); causes an error // if you don't change the value, it will keep running on the last value given -- test to see if this is true though
   }
 
-  private int driveDistance(double speed, double targetDistance){
-    frontRightEncoder.setPosition(0); // always initialize encoder position to 0
+  private void driveDistance(double speed, double targetDistance, double initialPostion){
+    targetDistance = targetDistance + initialPostion;
     while (Math.abs(frontRightEncoder.getPosition()) < Math.abs(targetDistance) ) { //while the encoder (starting at 0 distance) is less than the target distance
       robotDrive.arcadeDrive(speed,0); // drive forward at given speed
-    }
-    return 1;
+    
+  }
+     
     // robotDrive.arcadeDrive(0,0); // cases an error
   } // may need to add room for error as in turnInPlace
 
@@ -245,11 +249,13 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
        
-    backLeftEncoder.setPosition(0);
-    backRightEncoder.setPosition(0);
-    frontLeftEncoder.setPosition(0);
-    frontRightEncoder.setPosition(0);
-
+    // backLeftEncoder.setPosition(0);
+    // backRightEncoder.setPosition(0);
+    // frontLeftEncoder.setPosition(0);
+    // frontRightEncoder.setPosition(0);
+    
+    
+   
    
     m_autoSelected = m_chooser.getSelected();
     // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
@@ -264,7 +270,7 @@ public class Robot extends TimedRobot {
         shootDrive.arcadeDrive(0.9, 0); //shoot at 0.9 speed (change speed accordingly)
       }
       else { // note has been shot (sensor not sensing note anymore)
-        driveDistance(0.5,24); // input is speed, target distance (in)
+        driveDistance(0.5,24,     frontRightEncoder.getPosition()); // input is speed, target distance (in)
       }
       break; // end kShootAndDrive
 
@@ -276,7 +282,7 @@ public class Robot extends TimedRobot {
       // //  backRobotDrive.arcadeDrive (0.5,0);
       // the above 'if' only really applies to auto periodic
     //  robotDrive.arcadeDrive(0,0);
-       driveDistance(0.2,12); // input is speed, target distance (in)
+       driveDistance(0.2,120,      frontRightEncoder.getPosition());
        turnInPlace(45,0.2);
        
       break; // end kLeave
