@@ -56,8 +56,8 @@ public class Robot extends TimedRobot {
   // declare DifferentialDrive object
   DifferentialDrive frontRobotDrive;
   DifferentialDrive backRobotDrive;
-  DifferentialDrive shootDrive;
-  DifferentialDrive intakeDrive;
+  // DifferentialDrive shootDrive;
+  // DifferentialDrive intakeDrive;
   DifferentialDrive robotDrive;
 
   // delcare gyro
@@ -160,8 +160,8 @@ public class Robot extends TimedRobot {
     //  backRobotDrive = new DifferentialDrive(backLeftDriveMotor::set,backRightDriveMotor::set);
     robotDrive = new DifferentialDrive(frontLeftDriveMotor,frontRightDriveMotor); //all motors connected
 
-    shootDrive = new DifferentialDrive(leftShoot,rightShoot);
-    intakeDrive = new DifferentialDrive(leftIntake,rightIntake);
+    // shootDrive = new DifferentialDrive(leftShoot,rightShoot);
+    // intakeDrive = new DifferentialDrive(leftIntake,rightIntake);
     // instead just make a method to just set the speed
     
    
@@ -215,7 +215,15 @@ public class Robot extends TimedRobot {
      
     // robotDrive.arcadeDrive(0,0); // cases an error
   } // may need to add room for error as in turnInPlace
+  private void shoot(double speed){
+    leftShoot.set(speed);
+    rightShoot.set(speed);
+  }
 
+  private void intake(double speed) {
+    rightIntake.set(speed);
+    leftIntake.set(speed);
+  }
 
 
   /**
@@ -233,6 +241,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("Back Left Distance", backLeftEncoder.getPosition());
     SmartDashboard.putNumber("Back Right Distance", backRightEncoder.getPosition());
     SmartDashboard.putBoolean("Shoot Sensor",shootSensor.get());
+    SmartDashboard.putNumber("gyro", gyro.getAngle());
  
   }
 
@@ -254,7 +263,10 @@ public class Robot extends TimedRobot {
     // frontLeftEncoder.setPosition(0);
     // frontRightEncoder.setPosition(0);
     
-    
+    frontLeftDriveMotor.setInverted(false);
+    backLeftDriveMotor.setInverted(false);
+    frontRightDriveMotor.setInverted(true);
+    backRightDriveMotor.setInverted(true);
    
    
     m_autoSelected = m_chooser.getSelected();
@@ -267,7 +279,7 @@ public class Robot extends TimedRobot {
       // may need to modify depending where note is loaded.
       //if loaded in intake - will need to push note up using actuators, then shoot, then drive.
       if (shootSensor.get()){ //note is in shooter
-        shootDrive.arcadeDrive(0.9, 0); //shoot at 0.9 speed (change speed accordingly)
+        shoot(0.9);; //shoot at 0.9 speed (change speed accordingly)
       }
       else { // note has been shot (sensor not sensing note anymore)
         driveDistance(0.5,24,     frontRightEncoder.getPosition()); // input is speed, target distance (in)
@@ -282,8 +294,8 @@ public class Robot extends TimedRobot {
       // //  backRobotDrive.arcadeDrive (0.5,0);
       // the above 'if' only really applies to auto periodic
     //  robotDrive.arcadeDrive(0,0);
-       driveDistance(0.2,120,      frontRightEncoder.getPosition());
-       turnInPlace(45,0.2);
+       driveDistance(0.5,120,      frontRightEncoder.getPosition());
+       turnInPlace(45,0.3);
        
       break; // end kLeave
 
@@ -330,11 +342,11 @@ public class Robot extends TimedRobot {
   
   // Shoot - A button
   if (Controller2.getAButton()) {
-    shootDrive.arcadeDrive(0.9, 0); //shoot at 0.9 speed (change speed accoridngly)
+    shoot(0.9);; //shoot at 0.9 speed (change speed accoridngly)
   }
   // Intake - B button
   if (Controller2.getBButton()) {
-    intakeDrive.arcadeDrive(0.1, 0); //intake at 0.1 speed (change speed accoridngly)
+    intake(0.1);; //intake at 0.1 speed (change speed accoridngly)
   }
   // actuators - X button
   if (Controller2.getXButton()) {
