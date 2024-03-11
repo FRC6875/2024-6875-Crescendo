@@ -47,8 +47,8 @@ public class Robot extends TimedRobot {
   CANSparkMax rightIntake = new CANSparkMax(8, MotorType.kBrushless);//Shoud be brushed
 
   //declare actuators
-  Servo actuator1 = new Servo(0);
-  Servo actuator2 = new Servo(1);
+  // Servo actuator1 = new Servo(0);
+  // Servo actuator2 = new Servo(1);
 
   //declare input sensor
   DigitalInput shootSensor = new DigitalInput(0);
@@ -97,8 +97,8 @@ public class Robot extends TimedRobot {
   public void robotInit() {
 
     //initialize actuators
-    actuator1.setBoundsMicroseconds(2000, 0, 1500, 0, 0);
-    actuator2.setBoundsMicroseconds(2000, 0, 1500, 0, 0);
+    // actuator1.setBoundsMicroseconds(2000, 0, 1500, 0, 0);
+    // actuator2.setBoundsMicroseconds(2000, 0, 1500, 0, 0);
 
 
     // initialize motors
@@ -225,7 +225,6 @@ public class Robot extends TimedRobot {
     leftIntake.set(speed);
   }
 
-
   /**
    * This function is called every 20 ms, no matter the mode. Use this for items like diagnostics
    * that you want ran during disabled, autonomous, teleoperated and test.
@@ -348,17 +347,17 @@ public class Robot extends TimedRobot {
   if (Controller2.getBButton()) {
     intake(0.1);; //intake at 0.1 speed (change speed accoridngly)
   }
-  // actuators - X button
-  if (Controller2.getXButton()) {
-    actuator1.setSpeed(0.95);
-    actuator2.setSpeed(0.95);
-  }
-  // actuators - Y button
-  if (Controller2.getYButton()) {
-    actuator1.setSpeed(0.05);
-    actuator2.setSpeed(0.05);
+  // // actuators - X button
+  // if (Controller2.getXButton()) {
+  //   actuator1.setSpeed(0.95);
+  //   actuator2.setSpeed(0.95);
+  // }
+  // // actuators - Y button
+  // if (Controller2.getYButton()) {
+  //   actuator1.setSpeed(0.05);
+  //   actuator2.setSpeed(0.05);
 
-  }
+  // }
   }
   
 
