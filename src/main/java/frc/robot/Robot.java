@@ -46,6 +46,11 @@ public class Robot extends TimedRobot {
   CANSparkMax leftIntake = new CANSparkMax(7, MotorType.kBrushless);//Shoud be brushed
   CANSparkMax rightIntake = new CANSparkMax(8, MotorType.kBrushless);//Shoud be brushed
 
+  //declare lift motors
+    CANSparkMax rightLift = new CANSparkMax(9, MotorType.kBrushed);//Shoud be brushed
+   CANSparkMax leftLift = new CANSparkMax(10, MotorType.kBrushed);//Shoud be brushed
+
+
   //declare actuators
   // Servo actuator1 = new Servo(0);
   // Servo actuator2 = new Servo(1);
@@ -65,6 +70,7 @@ public class Robot extends TimedRobot {
 
 
 
+
   // declare XboxControllers
   XboxController Controller1 = new XboxController(0); //drive controller
   XboxController Controller2 = new XboxController(1); //shoot/intake/actuator controller
@@ -77,6 +83,7 @@ public class Robot extends TimedRobot {
   RelativeEncoder backRightEncoder;
   RelativeEncoder leftShootEncoder;
   RelativeEncoder rightShootEncoder;
+
 
 
   //declare autonomous modes
@@ -150,7 +157,8 @@ public class Robot extends TimedRobot {
     rightShoot.setInverted(true);
     leftIntake.setInverted(false);
     rightIntake.setInverted(true);
-    
+    rightLift.setInverted(true);
+    leftLift.setInverted(false);
 
 
     // create differential drive objects 
@@ -170,11 +178,11 @@ public class Robot extends TimedRobot {
   // get speed for drive motors -- not necessary, dependso m how you're moving your joystick
   private double getSpeed() {
     if (Controller1.getLeftY()<0){
-      return  -Controller1.getLeftY()*Controller1.getLeftY();
+      return  -Controller1.getLeftY()*Controller1.getLeftY()*0.2;
       
     }
    else {
-    return   Controller1.getLeftY()*Controller1.getLeftY();
+    return   Controller1.getLeftY()*Controller1.getLeftY()*0.2;
    }
 
   //   if (Controller1.getLeftY()<=-0.8){
@@ -225,6 +233,12 @@ public class Robot extends TimedRobot {
     leftIntake.set(speed);
   }
 
+  private void lift(double speed){
+  rightLift.set(speed);
+  leftLift.set(speed);
+
+  }
+
   /**
    * This function is called every 20 ms, no matter the mode. Use this for items like diagnostics
    * that you want ran during disabled, autonomous, teleoperated and test.
@@ -256,7 +270,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
-       
+    // gyro.reset();  // do we need to do this here?
     // backLeftEncoder.setPosition(0);
     // backRightEncoder.setPosition(0);
     // frontLeftEncoder.setPosition(0);
@@ -287,13 +301,12 @@ public class Robot extends TimedRobot {
 
 
       case kLeave: // robot only drives forward
-
       //   if ((frontRightEncoder.getPosition()<80)&&(frontLeftEncoder.getPosition()<80)&&(backRightEncoder.getPosition()<80)&&(backLeftEncoder.getPosition()<80)) {
       // //  frontRobotDrive.arcadeDrive (0.5,0);
       // //  backRobotDrive.arcadeDrive (0.5,0);
       // the above 'if' only really applies to auto periodic
-    //  robotDrive.arcadeDrive(0,0);
-       driveDistance(0.5,120,      frontRightEncoder.getPosition());
+      //  robotDrive.arcadeDrive(0,0);
+       driveDistance(0.2,20, frontRightEncoder.getPosition());
        turnInPlace(45,0.3);
        
       break; // end kLeave
@@ -322,12 +335,14 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during autonomous. */
   // @Override
   // public void autonomousPeriodic() {
-    
-  // } // we are no longer using this, and instead putting our cases in Auto Init above
+  // //   SmartDashboard.putNumber("gyro", gyro.getAngle());
+  //  } // we are no longer using this, and instead putting our cases in Auto Init above
 
   /** This function is called once when teleop is enabled. */
   @Override
-  public void teleopInit() {}
+  public void teleopInit() {
+    // gyro.reset(); -- ?
+  }
 
   /** This function is called periodically during operator control. */
   @Override
@@ -347,6 +362,16 @@ public class Robot extends TimedRobot {
   if (Controller2.getBButton()) {
     intake(0.1);; //intake at 0.1 speed (change speed accoridngly)
   }
+  if(Controller1.getXButton()){
+    gyro.reset();
+  }
+   if(Controller2.getPOV() == 0 ) {//UP
+    lift(0.1);
+
+   }
+   else if(Controller2.getPOV() == 180){//DOWN
+    lift(-0.1);
+   }
   // // actuators - X button
   // if (Controller2.getXButton()) {
   //   actuator1.setSpeed(0.95);
