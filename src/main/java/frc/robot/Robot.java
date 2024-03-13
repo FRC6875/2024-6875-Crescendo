@@ -47,8 +47,8 @@ public class Robot extends TimedRobot {
   CANSparkMax rightIntake = new CANSparkMax(8, MotorType.kBrushless);//Shoud be brushed
 
   //declare lift motors
-    CANSparkMax rightLift = new CANSparkMax(9, MotorType.kBrushed);//Shoud be brushed
-   CANSparkMax leftLift = new CANSparkMax(10, MotorType.kBrushed);//Shoud be brushed
+  //  CANSparkMax rightLift = new CANSparkMax(9, MotorType.kBrushed);//Shoud be brushed
+  //  CANSparkMax leftLift = new CANSparkMax(10, MotorType.kBrushed);//Shoud be brushed
 
 
   //declare actuators
@@ -153,12 +153,12 @@ public class Robot extends TimedRobot {
     backLeftDriveMotor.setInverted(true);
     frontRightDriveMotor.setInverted(false);
     backRightDriveMotor.setInverted(false); // have to do seperate for each motor
-    leftShoot.setInverted(false);
-    rightShoot.setInverted(true);
+    leftShoot.setInverted(true);
+    rightShoot.setInverted(false);
     leftIntake.setInverted(false);
     rightIntake.setInverted(true);
-    rightLift.setInverted(true);
-    leftLift.setInverted(false);
+    // rightLift.setInverted(true);
+    // leftLift.setInverted(false);
 
 
     // create differential drive objects 
@@ -211,7 +211,8 @@ public class Robot extends TimedRobot {
     while (Math.abs((gyro.getAngle() - targetAngle )) >= 5) { // as your angles get closer, the difference gets smaller. 5 is a tolerance, 5 degrees of error
       robotDrive.arcadeDrive(0,rotation*direction);
     }
-    // robotDrive.arcadeDrive(0,0); causes an error // if you don't change the value, it will keep running on the last value given -- test to see if this is true though
+    SmartDashboard.putNumber("IM HERE", gyro.getAngle());
+    robotDrive.arcadeDrive(0,0); // causes an error // if you don't change the value, it will keep running on the last value given -- test to see if this is true though
   }
 
   private void driveDistance(double speed, double targetDistance, double initialPostion){
@@ -234,8 +235,8 @@ public class Robot extends TimedRobot {
   }
 
   private void lift(double speed){
-  rightLift.set(speed);
-  leftLift.set(speed);
+  // rightLift.set(speed);
+  // leftLift.set(speed);
 
   }
 
@@ -356,12 +357,12 @@ public class Robot extends TimedRobot {
   
   // Shoot - A button
   if (Controller2.getAButton()) {
-    shoot(0.9);; //shoot at 0.9 speed (change speed accoridngly)
-  }
+    shoot(0.9); //shoot at 0.9 speed (change speed accoridngly)
+  }else shoot(0.0);
   // Intake - B button
   if (Controller2.getBButton()) {
-    intake(0.1);; //intake at 0.1 speed (change speed accoridngly)
-  }
+    intake(0.1); //intake at 0.1 speed (change speed accoridngly)
+  }else shoot(0.0);
   if(Controller1.getXButton()){
     gyro.reset();
   }
