@@ -348,6 +348,7 @@ public class Robot extends TimedRobot {
     // gyro.reset(); -- ?
   }
 
+
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
