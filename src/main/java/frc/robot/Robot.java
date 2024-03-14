@@ -210,8 +210,11 @@ public class Robot extends TimedRobot {
     // gives room for error, tolerance range
     while (Math.abs((gyro.getAngle() - targetAngle )) >= 5) { // as your angles get closer, the difference gets smaller. 5 is a tolerance, 5 degrees of error
       robotDrive.arcadeDrive(0,rotation*direction);
+      SmartDashboard.putNumber("IM HERE", gyro.getAngle());
+      SmartDashboard.putNumber("angle math", gyro.getAngle() - targetAngle);
     }
-    SmartDashboard.putNumber("IM HERE", gyro.getAngle());
+    // SmartDashboard.putNumber("IM HERE", gyro.getAngle());
+
     robotDrive.arcadeDrive(0,0); // causes an error // if you don't change the value, it will keep running on the last value given -- test to see if this is true though
   }
 
@@ -222,7 +225,7 @@ public class Robot extends TimedRobot {
     
   }
      
-    // robotDrive.arcadeDrive(0,0); // cases an error
+     robotDrive.arcadeDrive(0,0); // cases an error
   } // may need to add room for error as in turnInPlace
   private void shoot(double speed){
     leftShoot.set(speed);
