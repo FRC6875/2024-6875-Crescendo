@@ -160,6 +160,8 @@ public class Robot extends TimedRobot {
     // rightLift.setInverted(true);
     // leftLift.setInverted(false);
 
+    gyro.reset();
+
 
     // create differential drive objects 
     // we removed '::set' from parameters
@@ -178,11 +180,11 @@ public class Robot extends TimedRobot {
   // get speed for drive motors -- not necessary, dependso m how you're moving your joystick
   private double getSpeed() {
     if (Controller1.getLeftY()<0){
-      return  -Controller1.getLeftY()*Controller1.getLeftY()*0.2;
+      return  -Controller1.getLeftY()*Controller1.getLeftY()*0.3;
       
     }
    else {
-    return   Controller1.getLeftY()*Controller1.getLeftY()*0.2;
+    return   Controller1.getLeftY()*Controller1.getLeftY()*0.3;
    }
 
   //   if (Controller1.getLeftY()<=-0.8){
@@ -202,16 +204,16 @@ public class Robot extends TimedRobot {
     double direction = 1; // in NavX, clockwise is positive??
     // dont mount NavX backwards!!!
     if ( (gyro.getAngle()) < targetAngle ) {
-      direction = 1;
+      direction = -1;
     }
     else if ( (gyro.getAngle()) > targetAngle ) {
-      direction = -1;
+      direction = 1;
     }
     // gives room for error, tolerance range
     while (Math.abs((gyro.getAngle() - targetAngle )) >= 5) { // as your angles get closer, the difference gets smaller. 5 is a tolerance, 5 degrees of error
       robotDrive.arcadeDrive(0,rotation*direction);
       SmartDashboard.putNumber("IM HERE", gyro.getAngle());
-      SmartDashboard.putNumber("angle math", gyro.getAngle() - targetAngle);
+      // SmartDashboard.putNumber("angle math", gyro.getAngle() - targetAngle);
     }
     // SmartDashboard.putNumber("IM HERE", gyro.getAngle());
 
@@ -274,18 +276,19 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
-    // gyro.reset();  // do we need to do this here?
+    gyro.reset(); 
     // backLeftEncoder.setPosition(0);
     // backRightEncoder.setPosition(0);
     // frontLeftEncoder.setPosition(0);
     // frontRightEncoder.setPosition(0);
     
-    frontLeftDriveMotor.setInverted(false);
-    backLeftDriveMotor.setInverted(false);
-    frontRightDriveMotor.setInverted(true);
-    backRightDriveMotor.setInverted(true);
+    // frontLeftDriveMotor.setInverted(false);
+    // backLeftDriveMotor.setInverted(false);
+    // frontRightDriveMotor.setInverted(true);
+    // backRightDriveMotor.setInverted(true);
    
-   
+  
+
     m_autoSelected = m_chooser.getSelected();
     // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
     System.out.println("Auto selected: " + m_autoSelected);
@@ -345,7 +348,7 @@ public class Robot extends TimedRobot {
   /** This function is called once when teleop is enabled. */
   @Override
   public void teleopInit() {
-    // gyro.reset(); -- ?
+    gyro.reset();
   }
 
   /** This function is called periodically during operator control. */
