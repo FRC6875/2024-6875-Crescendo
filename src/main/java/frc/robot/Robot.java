@@ -22,6 +22,8 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.SPI;
 import java.lang.Math;
+import edu.wpi.first.wpilibj.Timer;
+
 
 
 
@@ -40,8 +42,11 @@ public class Robot extends TimedRobot {
   CANSparkMax backRightDriveMotor = new CANSparkMax(4, MotorType.kBrushless);
    
   // declare shooter motors
-  CANSparkMax leftShoot = new CANSparkMax(5, MotorType.kBrushless);
+  CANSparkMax leftShoot = new CANSparkMax(11, MotorType.kBrushless);
   CANSparkMax rightShoot = new CANSparkMax(6, MotorType.kBrushless);
+  CANSparkMax rightShoot2 = new CANSparkMax(9, MotorType.kBrushed);
+  CANSparkMax leftShoot2 = new CANSparkMax(10, MotorType.kBrushed);
+
 
   CANSparkMax leftIntake = new CANSparkMax(7, MotorType.kBrushless);//Shoud be brushed
   CANSparkMax rightIntake = new CANSparkMax(8, MotorType.kBrushless);//Shoud be brushed
@@ -68,6 +73,7 @@ public class Robot extends TimedRobot {
   // delcare gyro
   AHRS gyro = new AHRS(SPI.Port.kMXP);
 
+  Timer waitTimer = new Timer();
 
 
 
@@ -153,10 +159,11 @@ public class Robot extends TimedRobot {
     backLeftDriveMotor.setInverted(true);
     frontRightDriveMotor.setInverted(false);
     backRightDriveMotor.setInverted(false); // have to do seperate for each motor
-    leftShoot.setInverted(true);
-    rightShoot.setInverted(false);
+    leftShoot.setInverted(false);
+    rightShoot.setInverted(true);
     leftIntake.setInverted(false);
     rightIntake.setInverted(true);
+    leftShoot2.setInverted(false);
     // rightLift.setInverted(true);
     // leftLift.setInverted(false);
 
@@ -204,10 +211,10 @@ public class Robot extends TimedRobot {
     double direction = 1; // in NavX, clockwise is positive??
     // dont mount NavX backwards!!!
     if ( (gyro.getAngle()) < targetAngle ) {
-      direction = -1;
+      direction = 1;
     }
     else if ( (gyro.getAngle()) > targetAngle ) {
-      direction = 1;
+      direction = -1;
     }
     // gives room for error, tolerance range
     while (Math.abs((gyro.getAngle() - targetAngle )) >= 5) { // as your angles get closer, the difference gets smaller. 5 is a tolerance, 5 degrees of error
@@ -230,9 +237,17 @@ public class Robot extends TimedRobot {
      robotDrive.arcadeDrive(0,0); // cases an error
   } // may need to add room for error as in turnInPlace
   private void shoot(double speed){
-    leftShoot.set(speed);
-    rightShoot.set(speed);
-  }
+   waitTimer.start();
+   if ((waitTimer.get()) < 5) {
+     leftShoot2.set(speed);
+    rightShoot2.set(speed);
+   } 
+   else leftShoot.set(speed);
+       rightShoot.set(speed);
+      waitTimer.stop();
+      waitTimer.reset();
+      }
+  
 
   private void intake(double speed) {
     rightIntake.set(speed);
@@ -299,7 +314,7 @@ public class Robot extends TimedRobot {
       // may need to modify depending where note is loaded.
       //if loaded in intake - will need to push note up using actuators, then shoot, then drive.
       if (shootSensor.get()){ //note is in shooter
-        shoot(0.9);; //shoot at 0.9 speed (change speed accordingly)
+        shoot(0.5);; //shoot at 0.9 speed (change speed accordingly)
       }
       else { // note has been shot (sensor not sensing note anymore)
         driveDistance(0.5,24,     frontRightEncoder.getPosition()); // input is speed, target distance (in)
@@ -313,11 +328,12 @@ public class Robot extends TimedRobot {
       // //  backRobotDrive.arcadeDrive (0.5,0);
       // the above 'if' only really applies to auto periodic
       //  robotDrive.arcadeDrive(0,0);
-       driveDistance(0.2,20, frontRightEncoder.getPosition());
-       turnInPlace(45,0.3);
-       
+       driveDistance(0.2,336, frontRightEncoder.getPosition());
+      //  turnInPlace(45,0.3);
+      //  driveDistance(0.2, 20, frontRightEncoder.getPosition());
       break; // end kLeave
-
+      
+     
       case kShootLeavePickup:
         //shoot
         //drivedistance
@@ -332,6 +348,11 @@ public class Robot extends TimedRobot {
 
       case kShootLeaveTurnRed:
         //turn red?
+        
+        driveDistance(0.2,20, frontRightEncoder.getPosition());
+       turnInPlace(45,0.3);
+       driveDistance(0.2, 336, frontRightEncoder.getPosition());
+       
       break;
 
       default:
@@ -366,10 +387,12 @@ public class Robot extends TimedRobot {
   if (Controller2.getAButton()) {
     shoot(0.9); //shoot at 0.9 speed (change speed accoridngly)
   }else shoot(0.0);
+  waitTimer.stop();
+  waitTimer.reset();
   // Intake - B button
   if (Controller2.getBButton()) {
-    intake(0.1); //intake at 0.1 speed (change speed accoridngly)
-  }else shoot(0.0);
+    intake(0.5); //intake at 0.1 speed (change speed accoridngly)
+  }else intake(0.0);
   if(Controller1.getXButton()){
     gyro.reset();
   }
