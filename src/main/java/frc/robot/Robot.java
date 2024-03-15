@@ -42,14 +42,14 @@ public class Robot extends TimedRobot {
   CANSparkMax backRightDriveMotor = new CANSparkMax(4, MotorType.kBrushless);
    
   // declare shooter motors
-  CANSparkMax leftShoot = new CANSparkMax(11, MotorType.kBrushless);
-  CANSparkMax rightShoot = new CANSparkMax(6, MotorType.kBrushless);
+  CANSparkMax leftShoot = new CANSparkMax(6, MotorType.kBrushless);
+  CANSparkMax rightShoot = new CANSparkMax(10, MotorType.kBrushless);
   CANSparkMax rightShoot2 = new CANSparkMax(9, MotorType.kBrushed);
-  CANSparkMax leftShoot2 = new CANSparkMax(10, MotorType.kBrushed);
+  CANSparkMax leftShoot2 = new CANSparkMax(5, MotorType.kBrushed);
 
 
-  CANSparkMax leftIntake = new CANSparkMax(7, MotorType.kBrushless);//Shoud be brushed
-  CANSparkMax rightIntake = new CANSparkMax(8, MotorType.kBrushless);//Shoud be brushed
+  CANSparkMax leftIntake = new CANSparkMax(7, MotorType.kBrushed);//Shoud be brushed
+  CANSparkMax rightIntake = new CANSparkMax(8, MotorType.kBrushed);//Shoud be brushed
 
   //declare lift motors
   //  CANSparkMax rightLift = new CANSparkMax(9, MotorType.kBrushed);//Shoud be brushed
@@ -159,11 +159,15 @@ public class Robot extends TimedRobot {
     backLeftDriveMotor.setInverted(true);
     frontRightDriveMotor.setInverted(false);
     backRightDriveMotor.setInverted(false); // have to do seperate for each motor
-    leftShoot.setInverted(false);
-    rightShoot.setInverted(true);
+    leftShoot.setInverted(true);
+    rightShoot.setInverted(false);
     leftIntake.setInverted(false);
-    rightIntake.setInverted(true);
-    leftShoot2.setInverted(false);
+    rightIntake.setInverted(true);   
+    leftShoot2.setInverted(true);
+    rightShoot2.setInverted(false);
+    rightIntake.setInverted(false);
+    leftIntake.setInverted(true);
+
     // rightLift.setInverted(true);
     // leftLift.setInverted(false);
 
@@ -230,23 +234,31 @@ public class Robot extends TimedRobot {
   private void driveDistance(double speed, double targetDistance, double initialPostion){
     targetDistance = targetDistance + initialPostion;
     while (Math.abs(frontRightEncoder.getPosition()) < Math.abs(targetDistance) ) { //while the encoder (starting at 0 distance) is less than the target distance
-      robotDrive.arcadeDrive(speed,0); // drive forward at given speed
-    
+      robotDrive.arcadeDrive(speed*-1,0); // drive forward at given speed
+      SmartDashboard.putNumber("Front right Distance", Math.abs(frontRightEncoder.getPosition()));
+
   }
      
      robotDrive.arcadeDrive(0,0); // cases an error
   } // may need to add room for error as in turnInPlace
-  private void shoot(double speed){
+private void shoot(double speed){
+
+
    waitTimer.start();
-   if ((waitTimer.get()) < 5) {
-     leftShoot2.set(speed);
+      SmartDashboard.putNumber("seconds", waitTimer.get());
+
+   if ((waitTimer.get()) < 0.005) {
+   leftShoot.set(speed);
+  rightShoot.set(speed);
+    } 
+    else {
     rightShoot2.set(speed);
-   } 
-   else leftShoot.set(speed);
-       rightShoot.set(speed);
-      waitTimer.stop();
-      waitTimer.reset();
-      }
+    leftShoot2.set(speed);}
+   
+    waitTimer.stop();
+    // waitTimer.reset();
+   
+    }
   
 
   private void intake(double speed) {
@@ -292,10 +304,10 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     gyro.reset(); 
-    // backLeftEncoder.setPosition(0);
-    // backRightEncoder.setPosition(0);
-    // frontLeftEncoder.setPosition(0);
-    // frontRightEncoder.setPosition(0);
+     backLeftEncoder.setPosition(0);
+     backRightEncoder.setPosition(0);
+     frontLeftEncoder.setPosition(0);
+     frontRightEncoder.setPosition(0);
     
     // frontLeftDriveMotor.setInverted(false);
     // backLeftDriveMotor.setInverted(false);
@@ -328,9 +340,13 @@ public class Robot extends TimedRobot {
       // //  backRobotDrive.arcadeDrive (0.5,0);
       // the above 'if' only really applies to auto periodic
       //  robotDrive.arcadeDrive(0,0);
-       driveDistance(0.2,336, frontRightEncoder.getPosition());
-      //  turnInPlace(45,0.3);
-      //  driveDistance(0.2, 20, frontRightEncoder.getPosition());
+       driveDistance(0.2,-20, frontRightEncoder.getPosition());
+           SmartDashboard.putNumber("Front right Distance", frontRightEncoder.getPosition());
+       turnInPlace(45,0.3);
+           SmartDashboard.putNumber("Front right Distance", frontRightEncoder.getPosition());
+       driveDistance(0.2, -25, frontRightEncoder.getPosition());
+           SmartDashboard.putNumber("Front right Distance", frontRightEncoder.getPosition());
+
       break; // end kLeave
       
      
@@ -386,13 +402,16 @@ public class Robot extends TimedRobot {
   // Shoot - A button
   if (Controller2.getAButton()) {
     shoot(0.9); //shoot at 0.9 speed (change speed accoridngly)
-  }else shoot(0.0);
+  }else {
+  shoot(0.0);
   waitTimer.stop();
   waitTimer.reset();
+  }
   // Intake - B button
   if (Controller2.getBButton()) {
     intake(0.5); //intake at 0.1 speed (change speed accoridngly)
   }else intake(0.0);
+
   if(Controller1.getXButton()){
     gyro.reset();
   }
