@@ -143,6 +143,7 @@ public class Robot extends TimedRobot {
     m_chooser.addOption("Shoot and drive pick up and stay", kShootLeavePickup);
     m_chooser.addOption("Do nothing", kSitAndDoNothing);
     m_chooser.addOption("Shoot Leave Red Alliance closest to the amp",kShootLeaveTurnRed);
+
     SmartDashboard.putData("Auto choices", m_chooser);
 
     // set leader/followers - this connects the front and back motors to drive together
@@ -167,6 +168,14 @@ public class Robot extends TimedRobot {
     rightShoot2.setInverted(false);
     rightIntake.setInverted(false);
     leftIntake.setInverted(true);
+
+
+    // burn settings into memory
+    frontLeftDriveMotor.burnFlash();
+    frontRightDriveMotor.burnFlash();
+    backRightDriveMotor.burnFlash();
+    backLeftDriveMotor.burnFlash();
+
 
     // rightLift.setInverted(true);
     // leftLift.setInverted(false);
@@ -247,18 +256,39 @@ private void shoot(double speed){
    waitTimer.start();
       SmartDashboard.putNumber("seconds", waitTimer.get());
 
-   if ((waitTimer.get()) < 0.005) {
-   leftShoot.set(speed);
-  rightShoot.set(speed);
+    if ((waitTimer.get()) < 0.005) {
+    leftShoot.set(speed);
+    rightShoot.set(speed);
     } 
     else {
     rightShoot2.set(speed);
-    leftShoot2.set(speed);}
+    leftShoot2.set(speed);
+    }
    
     waitTimer.stop();
     // waitTimer.reset();
    
+  }
+
+  private void shootAuto(double speed){
+
+
+   waitTimer.start();
+      SmartDashboard.putNumber("seconds", waitTimer.get());
+
+    if ((waitTimer.get()) < 0.005) {
+    leftShoot.set(speed);
+    rightShoot.set(speed);
+    } 
+    else if (waitTimer.get() < 0.1 ) {
+    rightShoot2.set(speed);
+    leftShoot2.set(speed);
     }
+   
+    waitTimer.stop();
+    // waitTimer.reset();
+   
+  }
   
 
   private void intake(double speed) {
@@ -325,12 +355,8 @@ private void shoot(double speed){
       case kShootAndDrive: 
       // may need to modify depending where note is loaded.
       //if loaded in intake - will need to push note up using actuators, then shoot, then drive.
-      if (shootSensor.get()){ //note is in shooter
-        shoot(0.5);; //shoot at 0.9 speed (change speed accordingly)
-      }
-      else { // note has been shot (sensor not sensing note anymore)
-        driveDistance(0.5,24,     frontRightEncoder.getPosition()); // input is speed, target distance (in)
-      }
+    shootAuto(0.9);
+    driveDistance(0.2,-336, frontRightEncoder.getPosition());
       break; // end kShootAndDrive
 
 
@@ -340,12 +366,12 @@ private void shoot(double speed){
       // //  backRobotDrive.arcadeDrive (0.5,0);
       // the above 'if' only really applies to auto periodic
       //  robotDrive.arcadeDrive(0,0);
-       driveDistance(0.2,-20, frontRightEncoder.getPosition());
+       driveDistance(0.2,-336, frontRightEncoder.getPosition());
            SmartDashboard.putNumber("Front right Distance", frontRightEncoder.getPosition());
-       turnInPlace(45,0.3);
-           SmartDashboard.putNumber("Front right Distance", frontRightEncoder.getPosition());
-       driveDistance(0.2, -25, frontRightEncoder.getPosition());
-           SmartDashboard.putNumber("Front right Distance", frontRightEncoder.getPosition());
+      //  turnInPlace(45,0.3);
+      //      SmartDashboard.putNumber("Front right Distance", frontRightEncoder.getPosition());
+      //  driveDistance(0.2, -25, frontRightEncoder.getPosition());
+      //      SmartDashboard.putNumber("Front right Distance", frontRightEncoder.getPosition());
 
       break; // end kLeave
       
@@ -355,6 +381,9 @@ private void shoot(double speed){
         //drivedistance
         //turnInPlace if needed
         //pickup
+        shootAuto(0.5);
+      driveDistance(0.2,20, frontRightEncoder.getPosition());
+       turnInPlace(45,0.3);
         
       break;
 
@@ -364,8 +393,8 @@ private void shoot(double speed){
 
       case kShootLeaveTurnRed:
         //turn red?
-        
-        driveDistance(0.2,20, frontRightEncoder.getPosition());
+      shootAuto(0.5);
+      driveDistance(0.2,20, frontRightEncoder.getPosition());
        turnInPlace(45,0.3);
        driveDistance(0.2, 336, frontRightEncoder.getPosition());
        
