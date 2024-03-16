@@ -407,13 +407,14 @@ private void shoot(double speed){
         driveDistance(0.2,20, frontRightEncoder.getPosition());
         turnInPlace(45,0.3);
         driveDistance(0.2,20, frontRightEncoder.getPosition());
-        if (intakeSensor.get()){
-        intake(0.5);
+
+        while (intakeSensor.get()) { // intake note
+          intake(0.5);
         }
-        else{
+          //drive
         driveDistance(0.2,20, frontRightEncoder.getPosition());
         shootAuto(0.5);
-      }
+        
         
       break;
 
@@ -424,33 +425,34 @@ private void shoot(double speed){
 
       case kShootLeaveTurnRedAmp:
         //turn red?
-      shootAuto(0.5);
-      driveDistance(0.2,20, frontRightEncoder.getPosition());
-       turnInPlace(45,0.3);
-       driveDistance(0.2, 336, frontRightEncoder.getPosition());
+        shootAuto(0.5);
+        driveDistance(0.2,20, frontRightEncoder.getPosition());
+        turnInPlace(45,0.3);
+        driveDistance(0.2, 336, frontRightEncoder.getPosition());
        
       break;
 
       case kShootLeaveTurnBlueAmp:
-      shootAuto(0.5);
-      driveDistance(0.2,20, frontRightEncoder.getPosition());
-      turnInPlace(45,0.3);
-      driveDistance(0.2, 336, frontRightEncoder.getPosition());
+
+        shootAuto(0.5);
+        driveDistance(0.2,20, frontRightEncoder.getPosition());
+        turnInPlace(45,0.3);
+        driveDistance(0.2, 336, frontRightEncoder.getPosition());
 
       break;
       
       case kShootLeaveTurnBlueFartherAmp:
         shootAuto(0.5);
-      driveDistance(0.2,20, frontRightEncoder.getPosition());
-      turnInPlace(45,0.3);
-      driveDistance(0.2, 336, frontRightEncoder.getPosition());
+        driveDistance(0.2,20, frontRightEncoder.getPosition());
+        turnInPlace(45,0.3);
+        driveDistance(0.2, 336, frontRightEncoder.getPosition());
       break;
 
       case kShootLeaveTurnRedFartherAmp:
-      shootAuto(0.5);
-      driveDistance(0.2,20, frontRightEncoder.getPosition());
-      turnInPlace(45,0.3);
-      driveDistance(0.2, 336, frontRightEncoder.getPosition());
+        shootAuto(0.5);
+        driveDistance(0.2,20, frontRightEncoder.getPosition());
+        turnInPlace(45,0.3);
+        driveDistance(0.2, 336, frontRightEncoder.getPosition());
       break;
 
 
