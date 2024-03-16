@@ -161,7 +161,7 @@ public class Robot extends TimedRobot {
     backRightDriveMotor.follow(frontRightDriveMotor);
 
 
-  // not doinmg cameras
+    // not doinmg cameras
     // CameraServer.startAutomaticCapture();
     // CameraServer.startAutomaticCapture();
 
@@ -204,10 +204,12 @@ public class Robot extends TimedRobot {
     // intakeDrive = new DifferentialDrive(leftIntake,rightIntake);
     // instead just make a method to just set the speed
     
-   
+  }   //end robotInit
 
-  }
-  // get speed for drive motors -- not necessary, dependso m how you're moving your joystick
+
+
+//////////////////// START METHODS ////////////////////////
+
   private double getSpeed() {
     if (Controller1.getLeftY()<0){
       return  -Controller1.getLeftY()*Controller1.getLeftY()*0.3;
@@ -216,19 +218,9 @@ public class Robot extends TimedRobot {
    else {
     return   Controller1.getLeftY()*Controller1.getLeftY()*0.3;
    }
-
-  //   if (Controller1.getLeftY()<=-0.8){
-  //     return  -1;
-      
-  //   }
-  //   else if (Controller1.getLeftY()>=0.8) {
-  //     return 1;
-  //   }
-  //  else {
-  //   return Controller1.getLeftY();
-  //  }
     
-  }
+  }   // end getSpeed
+
 
   private void turnInPlace(double targetAngle, double rotation) {
     double direction = 1; // in NavX, clockwise is positive??
@@ -247,21 +239,22 @@ public class Robot extends TimedRobot {
     }
     // SmartDashboard.putNumber("IM HERE", gyro.getAngle());
 
-    robotDrive.arcadeDrive(0,0); // causes an error // if you don't change the value, it will keep running on the last value given -- test to see if this is true though
-  }
+    robotDrive.arcadeDrive(0,0); 
+  }   // end turnInPlace
+
 
   private void driveDistance(double speed, double targetDistance, double initialPostion){
     targetDistance = targetDistance + initialPostion;
     while (Math.abs(frontRightEncoder.getPosition()) < Math.abs(targetDistance) ) { //while the encoder (starting at 0 distance) is less than the target distance
       robotDrive.arcadeDrive(speed*-1,0); // drive forward at given speed
       SmartDashboard.putNumber("Front right Distance", Math.abs(frontRightEncoder.getPosition()));
-
-  }
+    }
      
      robotDrive.arcadeDrive(0,0); // cases an error
-  } // may need to add room for error as in turnInPlace
-private void shoot(double speed){
+  } // end driveDistance
 
+
+private void shoot(double speed){
 
    waitTimer.start();
       SmartDashboard.putNumber("seconds", waitTimer.get());
@@ -278,10 +271,10 @@ private void shoot(double speed){
     waitTimer.stop();
     // waitTimer.reset();
    
-  }
+  }   // end shoot
+
 
   private void shootAuto(double speed){
-
 
    waitTimer.start();
       SmartDashboard.putNumber("seconds", waitTimer.get());
@@ -298,19 +291,22 @@ private void shoot(double speed){
     waitTimer.stop();
     // waitTimer.reset();
    
-  }
+  }   // end shootAuto
   
 
   private void intake(double speed) {
     rightIntake.set(speed);
     leftIntake.set(speed);
-  }
+  }   // end intake
 
   private void lift(double speed){
   // rightLift.set(speed);
   // leftLift.set(speed);
+  }   // end lift
 
-  }
+
+
+  //////////////////// END METHODS ////////////////////////
 
   /**
    * This function is called every 20 ms, no matter the mode. Use this for items like diagnostics
@@ -363,25 +359,17 @@ private void shoot(double speed){
     switch (m_autoSelected) {
 
       case kShootAndDrive: 
-      // may need to modify depending where note is loaded.
-      //if loaded in intake - will need to push note up using actuators, then shoot, then drive.
-    shootAuto(0.9);
-    driveDistance(0.2,-336, frontRightEncoder.getPosition());
+
+        shootAuto(0.9);
+        driveDistance(0.2,-336, frontRightEncoder.getPosition());
+
       break; // end kShootAndDrive
 
 
       case kLeave: // robot only drives forward
-      //   if ((frontRightEncoder.getPosition()<80)&&(frontLeftEncoder.getPosition()<80)&&(backRightEncoder.getPosition()<80)&&(backLeftEncoder.getPosition()<80)) {
-      // //  frontRobotDrive.arcadeDrive (0.5,0);
-      // //  backRobotDrive.arcadeDrive (0.5,0);
-      // the above 'if' only really applies to auto periodic
-      //  robotDrive.arcadeDrive(0,0);
+      
        driveDistance(0.2,-336, frontRightEncoder.getPosition());
-           SmartDashboard.putNumber("Front right Distance", frontRightEncoder.getPosition());
-      //  turnInPlace(45,0.3);
-      //      SmartDashboard.putNumber("Front right Distance", frontRightEncoder.getPosition());
-      //  driveDistance(0.2, -25, frontRightEncoder.getPosition());
-      //      SmartDashboard.putNumber("Front right Distance", frontRightEncoder.getPosition());
+       SmartDashboard.putNumber("Front right Distance", frontRightEncoder.getPosition());
 
       break; // end kLeave
       
@@ -392,12 +380,11 @@ private void shoot(double speed){
         driveDistance(0.2,20, frontRightEncoder.getPosition());
         turnInPlace(45,0.3);
         driveDistance(0.2,20, frontRightEncoder.getPosition());
-        if (intakeSensor.get()){
-        intake(0.5);
-        }
-        else{
-        driveDistance(0.0,0, frontRightEncoder.getPosition());
-        }
+
+        while (intakeSensor.get()) { // while intake senses reflection (note not in)
+        intake(0.5); // intake
+        } // will stop when it senses note
+
         
       break;
 
@@ -408,13 +395,12 @@ private void shoot(double speed){
         turnInPlace(45,0.3);
         driveDistance(0.2,20, frontRightEncoder.getPosition());
 
-        while (intakeSensor.get()) { // intake note
-          intake(0.5);
-        }
-          //drive
+        while (intakeSensor.get()) { // while intake senses reflection (note not in)
+          intake(0.5);  // intake
+        } // will stop when it senses note
+          
         driveDistance(0.2,20, frontRightEncoder.getPosition());
         shootAuto(0.5);
-        
         
       break;
 
@@ -457,10 +443,12 @@ private void shoot(double speed){
 
 
       default:
-        break;
-      }
-  }
-//d
+      break;
+      } // end cases
+  } // end auto init
+
+
+
   /** This function is called periodically during autonomous. */
   // @Override
   // public void autonomousPeriodic() {
@@ -487,7 +475,8 @@ private void shoot(double speed){
   // Shoot - A button
   if (Controller2.getAButton()) {
     shoot(0.9); //shoot at 0.9 speed (change speed accoridngly)
-  }else {
+  }
+  else {
   shoot(0.0);
   waitTimer.stop();
   waitTimer.reset();
@@ -518,7 +507,7 @@ private void shoot(double speed){
   //   actuator2.setSpeed(0.05);
 
   // }
-  }
+  }   // end teleopPeriodic
   
 
 
