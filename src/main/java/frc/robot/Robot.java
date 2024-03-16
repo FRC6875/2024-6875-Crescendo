@@ -61,7 +61,7 @@ public class Robot extends TimedRobot {
   // Servo actuator2 = new Servo(1);
 
   //declare input sensor
-  DigitalInput shootSensor = new DigitalInput(0);
+  DigitalInput intakeSensor = new DigitalInput(0);
 
   // declare DifferentialDrive object
   DifferentialDrive frontRobotDrive;
@@ -96,7 +96,13 @@ public class Robot extends TimedRobot {
   private static final String kShootAndDrive = "Shoot And Drive";
   private static final String kLeave = "Leave";
   private static final String kShootLeavePickup = "Shoot and drive pick up and stay";
-  private static final String kShootLeaveTurnRed= "Shoot Leave Red Alliance Closest to the amp";
+  private static final String kShootLeaveTurnRedAmp= "Shoot Leave Red Alliance Closest to the amp";
+  private static final String kShootLeaveTurnBlueAmp = "Shoot Leave Blue Alliance Closest to the amp";
+  private static final String kShootLeaveTurnBlueFartherAmp = "Shoot Leave Blue Alliance Fartherst to the amp";
+  private static final String kShootLeaveTurnRedFartherAmp = "Shoot Leave Red Alliance Farther to the amp";
+  private static final String kShootLeavePickupDriveShoot = "Shoot Leave Pickup and Shoot(Blue and Red)";
+
+
   private static final String kSitAndDoNothing = "Do nothing";
   private String m_autoSelected; // selection options
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
@@ -138,11 +144,15 @@ public class Robot extends TimedRobot {
     backRightEncoder.setPositionConversionFactor(Math.PI*6/8.45);
 
     // set autonomous mode names
-    m_chooser.setDefaultOption("Leave Auto", kLeave);
-    m_chooser.addOption("Shoot and Leave", kShootAndDrive);
-    m_chooser.addOption("Shoot and drive pick up and stay", kShootLeavePickup);
-    m_chooser.addOption("Do nothing", kSitAndDoNothing);
-    m_chooser.addOption("Shoot Leave Red Alliance closest to the amp",kShootLeaveTurnRed);
+    m_chooser.setDefaultOption("Leave Auto (Blue and Red)", kLeave);
+    m_chooser.addOption("Shoot and Leave Right in front of speaker(Blue and Red)", kShootAndDrive);
+    m_chooser.addOption("Shoot and drive pick up and stay Right in front of speaker", kShootLeavePickup);
+    m_chooser.addOption("Do nothing(blue and red)", kSitAndDoNothing);
+    m_chooser.addOption("Shoot Leave Red Alliance closest to the amp",kShootLeaveTurnRedAmp);
+    m_chooser.addOption("Shoot Leave Blue Alliance closest to the amp",kShootLeaveTurnBlueAmp);
+    m_chooser.addOption("Shoot Leave Blue Alliance Farther to the amp",kShootLeaveTurnBlueFartherAmp);
+    m_chooser.addOption("Shoot Leave red Alliance Farther to the amp",kShootLeaveTurnRedFartherAmp);
+    m_chooser.addOption("Shoot Leave Pickup and Shoot(Blue and Red)",kShootLeavePickupDriveShoot);
 
     SmartDashboard.putData("Auto choices", m_chooser);
 
@@ -316,7 +326,7 @@ private void shoot(double speed){
     SmartDashboard.putNumber("Front Right Distance", frontRightEncoder.getPosition());
     SmartDashboard.putNumber("Back Left Distance", backLeftEncoder.getPosition());
     SmartDashboard.putNumber("Back Right Distance", backRightEncoder.getPosition());
-    SmartDashboard.putBoolean("Shoot Sensor",shootSensor.get());
+    SmartDashboard.putBoolean("Shoot Sensor",intakeSensor.get());
     SmartDashboard.putNumber("gyro", gyro.getAngle());
  
   }
@@ -377,21 +387,42 @@ private void shoot(double speed){
       
      
       case kShootLeavePickup:
-        //shoot
-        //drivedistance
-        //turnInPlace if needed
-        //pickup
+
         shootAuto(0.5);
-      driveDistance(0.2,20, frontRightEncoder.getPosition());
-       turnInPlace(45,0.3);
+        driveDistance(0.2,20, frontRightEncoder.getPosition());
+        turnInPlace(45,0.3);
+        driveDistance(0.2,20, frontRightEncoder.getPosition());
+        if (intakeSensor.get()){
+        intake(0.5);
+        }
+        else{
+        driveDistance(0.0,0, frontRightEncoder.getPosition());
+        }
         
       break;
+
+      case kShootLeavePickupDriveShoot:
+
+        shootAuto(0.5);
+        driveDistance(0.2,20, frontRightEncoder.getPosition());
+        turnInPlace(45,0.3);
+        driveDistance(0.2,20, frontRightEncoder.getPosition());
+        if (intakeSensor.get()){
+        intake(0.5);
+        }
+        else{
+        driveDistance(0.2,20, frontRightEncoder.getPosition());
+        shootAuto(0.5);
+      }
+        
+      break;
+
 
       case kSitAndDoNothing:
         //done!
       break;
 
-      case kShootLeaveTurnRed:
+      case kShootLeaveTurnRedAmp:
         //turn red?
       shootAuto(0.5);
       driveDistance(0.2,20, frontRightEncoder.getPosition());
@@ -399,6 +430,29 @@ private void shoot(double speed){
        driveDistance(0.2, 336, frontRightEncoder.getPosition());
        
       break;
+
+      case kShootLeaveTurnBlueAmp:
+      shootAuto(0.5);
+      driveDistance(0.2,20, frontRightEncoder.getPosition());
+      turnInPlace(45,0.3);
+      driveDistance(0.2, 336, frontRightEncoder.getPosition());
+
+      break;
+      
+      case kShootLeaveTurnBlueFartherAmp:
+        shootAuto(0.5);
+      driveDistance(0.2,20, frontRightEncoder.getPosition());
+      turnInPlace(45,0.3);
+      driveDistance(0.2, 336, frontRightEncoder.getPosition());
+      break;
+
+      case kShootLeaveTurnRedFartherAmp:
+      shootAuto(0.5);
+      driveDistance(0.2,20, frontRightEncoder.getPosition());
+      turnInPlace(45,0.3);
+      driveDistance(0.2, 336, frontRightEncoder.getPosition());
+      break;
+
 
       default:
         break;
