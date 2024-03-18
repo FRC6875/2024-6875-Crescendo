@@ -276,16 +276,16 @@ private void shoot(double speed){
 
   private void shootAuto(double speed){
 
-   waitTimer.start();
-      SmartDashboard.putNumber("seconds", waitTimer.get());
+    waitTimer.start();
+    SmartDashboard.putNumber("seconds", waitTimer.get());
 
     if ((waitTimer.get()) < 0.005) {
-    leftShoot.set(speed);
-    rightShoot.set(speed);
+      leftShoot.set(speed);
+      rightShoot.set(speed);
     } 
     else if (waitTimer.get() < 0.1 ) {
-    rightShoot2.set(speed);
-    leftShoot2.set(speed);
+      rightShoot2.set(speed);
+      leftShoot2.set(speed);
     }
    
     waitTimer.stop();
@@ -360,9 +360,12 @@ private void shoot(double speed){
 
       case kShootAndDrive: 
 
+       if (waitTimer < 0.1){
         shootAuto(0.9);
-        driveDistance(0.2,-336, frontRightEncoder.getPosition());
-
+       }else {
+        // driveDistance(0.5,-336, frontRightEncoder.getPosition());
+        driveDistance(0.5,-30, frontRightEncoder.getPosition());
+       }
       break; // end kShootAndDrive
 
 
