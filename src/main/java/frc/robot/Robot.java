@@ -360,7 +360,7 @@ private void shoot(double speed){
 
       case kShootAndDrive: 
 
-       if (waitTimer < 0.1){
+       if (waitTimer.get() < 0.1){
         shootAuto(0.9);
        }else {
         // driveDistance(0.5,-336, frontRightEncoder.getPosition());
