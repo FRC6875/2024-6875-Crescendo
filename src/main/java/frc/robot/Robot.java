@@ -52,8 +52,8 @@ public class Robot extends TimedRobot {
   CANSparkMax rightIntake = new CANSparkMax(8, MotorType.kBrushed);//Shoud be brushed
 
   //declare lift motors
-  //  CANSparkMax rightLift = new CANSparkMax(9, MotorType.kBrushed);//Shoud be brushed
-  //  CANSparkMax leftLift = new CANSparkMax(10, MotorType.kBrushed);//Shoud be brushed
+  CANSparkMax rightLift = new CANSparkMax(9, MotorType.kBrushed);//Shoud be brushed
+  CANSparkMax leftLift = new CANSparkMax(10, MotorType.kBrushed);//Shoud be brushed
 
 
   //declare actuators
@@ -187,8 +187,8 @@ public class Robot extends TimedRobot {
     backLeftDriveMotor.burnFlash();
 
 
-    // rightLift.setInverted(true);
-    // leftLift.setInverted(false);
+     rightLift.setInverted(true);
+     leftLift.setInverted(false);
 
     gyro.reset();
 
@@ -279,11 +279,11 @@ private void shoot(double speed){
     waitTimer.start();
     SmartDashboard.putNumber("seconds", waitTimer.get());
 
-    if ((waitTimer.get()) < 0.005) {
+    while (waitTimer.get() < 0.005) { // ramp up top motors
       leftShoot.set(speed);
       rightShoot.set(speed);
     } 
-    else if (waitTimer.get() < 0.1 ) {
+    while (waitTimer.get() < 0.1 ) {
       rightShoot2.set(speed);
       leftShoot2.set(speed);
     }
@@ -300,8 +300,8 @@ private void shoot(double speed){
   }   // end intake
 
   private void lift(double speed){
-  // rightLift.set(speed);
-  // leftLift.set(speed);
+   rightLift.set(speed);
+   leftLift.set(speed);
   }   // end lift
 
 
@@ -360,12 +360,12 @@ private void shoot(double speed){
 
       case kShootAndDrive: 
 
-       if (waitTimer.get() < 0.1){
+      //  if (waitTimer.get() < 0.1){
         shootAuto(0.9);
-       }else {
+      //  }else {
         // driveDistance(0.5,-336, frontRightEncoder.getPosition());
         driveDistance(0.5,-30, frontRightEncoder.getPosition());
-       }
+      //  }
       break; // end kShootAndDrive
 
 
