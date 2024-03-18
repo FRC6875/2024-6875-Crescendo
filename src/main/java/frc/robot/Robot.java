@@ -212,11 +212,11 @@ public class Robot extends TimedRobot {
 
   private double getSpeed() {
     if (Controller1.getLeftY()<0){
-      return  -Controller1.getLeftY()*Controller1.getLeftY()*0.3;
+      return  -Controller1.getLeftY()*Controller1.getLeftY()*0.5;
       
     }
    else {
-    return   Controller1.getLeftY()*Controller1.getLeftY()*0.3;
+    return   Controller1.getLeftY()*Controller1.getLeftY()*0.5;
    }
     
   }   // end getSpeed
@@ -468,27 +468,41 @@ private void shoot(double speed){
   
   // frontRobotDrive.arcadeDrive(getSpeed(),Controller1.getLeftX());
   // backRobotDrive.arcadeDrive(getSpeed(),Controller1.getLeftX());
-  robotDrive.arcadeDrive(getSpeed(),Controller1.getLeftX()); // getSpeed()-getleftY instead of
+  robotDrive.arcadeDrive(getSpeed(),Controller1.getLeftX()*0.5); // getSpeed()-getleftY instead of
   // robotDrive.arcadeDrive(Controller1.getLeftY(),Controller1.getLeftX());
   // multiple either one by a decimal to slow down
   
-  // Shoot - A button
-  if (Controller2.getAButton()) {
+  // ShootSpeaker - X button
+  if (Controller2.getXButton()) {
     shoot(0.9); //shoot at 0.9 speed (change speed accoridngly)
+  } else if (Controller2.getYButton()) {
+    shoot(0.5); //shoot at 0.9 speed (change speed accoridngly)
+  }else {
+    shoot(0.0);
+    waitTimer.stop();
+    waitTimer.reset();
   }
-  else {
-  shoot(0.0);
-  waitTimer.stop();
-  waitTimer.reset();
-  }
-  // Intake - B button
-  if (Controller2.getBButton()) {
+
+  // ShootAmp - Y
+  // if (Controller2.getYButton()) {
+  //   shoot(0.2); //shoot at 0.9 speed (change speed accoridngly)
+  // }
+  // else {
+  // shoot(0.0);
+  // waitTimer.stop();
+  // waitTimer.reset();
+  // }
+  
+  // Intake - A button
+  if (Controller2.getAButton()) {
     intake(0.5); //intake at 0.1 speed (change speed accoridngly)
   }else intake(0.0);
 
-  if(Controller1.getXButton()){
+  if(Controller1.getBButton()){
     gyro.reset();
   }
+  //Lift - Dpad Up = up
+  //     - Dpad down = down
    if(Controller2.getPOV() == 0 ) {//UP
     lift(0.1);
 
