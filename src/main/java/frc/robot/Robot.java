@@ -18,13 +18,10 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.DigitalInput;
-// import edu.wpi.first.wpilibj.Servo;
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.SPI;
 import java.lang.Math;
 import edu.wpi.first.wpilibj.Timer;
-
-
 
 
 /**
@@ -55,11 +52,6 @@ public class Robot extends TimedRobot {
   CANSparkMax rightLift = new CANSparkMax(9, MotorType.kBrushed);//Shoud be brushed
   CANSparkMax leftLift = new CANSparkMax(10, MotorType.kBrushed);//Shoud be brushed
 
-
-  //declare actuators
-  // Servo actuator1 = new Servo(0);
-  // Servo actuator2 = new Servo(1);
-
   //declare input sensor
   DigitalInput intakeSensor = new DigitalInput(0);
 
@@ -76,7 +68,6 @@ public class Robot extends TimedRobot {
   Timer waitTimer = new Timer();
 
 
-
   // declare XboxControllers
   XboxController Controller1 = new XboxController(0); //drive controller
   XboxController Controller2 = new XboxController(1); //shoot/intake/actuator controller
@@ -91,16 +82,17 @@ public class Robot extends TimedRobot {
   RelativeEncoder rightShootEncoder;
 
 
-
   //declare autonomous modes
-  private static final String kShootAndDrive = "Shoot And Drive";
-  private static final String kLeave = "Leave";
-  private static final String kShootLeavePickup = "Shoot and drive pick up and stay";
-  private static final String kShootLeaveTurnRedAmp= "Shoot Leave Red Alliance Closest to the amp";
-  private static final String kShootLeaveTurnBlueAmp = "Shoot Leave Blue Alliance Closest to the amp";
-  private static final String kShootLeaveTurnBlueFartherAmp = "Shoot Leave Blue Alliance Fartherst to the amp";
-  private static final String kShootLeaveTurnRedFartherAmp = "Shoot Leave Red Alliance Farther to the amp";
-  private static final String kShootLeavePickupDriveShoot = "Shoot Leave Pickup and Shoot(Blue and Red)";
+  private static final String kShootAndDrive = "Shoot, drive forward from speaker center -- BLUE and RED";
+  private static final String kLeave = "Drive forward -- BLUE and RED";
+  private static final String kShootLeavePickup = "Shoot, drive forward from speaker center, intake -- BLUE and RED";
+  private static final String kShootLeaveTurnRedAmp= "Shoot, drive forward, turn -- RED closest to amp";
+  private static final String kShootLeaveTurnBlueAmp = "Shoot, drive forward, turn -- BLUE closest to amp";
+  private static final String kShootLeaveTurnBlueFartherAmp = "Shoot, drive forward, turn -- BLUE farther from amp";
+  private static final String kShootLeaveTurnRedFartherAmp = "Shoot, drive forward, turn -- RED Farther from amp";
+  private static final String kShootLeavePickupDriveShoot = "Shoot, drive forward, intake, drive backwards, shoot -- (Blue and Red)";
+  private static final String kSitAndDoNothing = "Do nothing -- BLUE and RED";
+
 
 
   private static final String kSitAndDoNothing = "Do nothing";
@@ -114,11 +106,6 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-
-    //initialize actuators
-    // actuator1.setBoundsMicroseconds(2000, 0, 1500, 0, 0);
-    // actuator2.setBoundsMicroseconds(2000, 0, 1500, 0, 0);
-
 
     // initialize motors
     frontLeftDriveMotor.restoreFactoryDefaults();
@@ -144,26 +131,21 @@ public class Robot extends TimedRobot {
     backRightEncoder.setPositionConversionFactor(Math.PI*6/8.45);
 
     // set autonomous mode names
-    m_chooser.setDefaultOption("Leave Auto (Blue and Red)", kLeave);
-    m_chooser.addOption("Shoot and Leave Right in front of speaker(Blue and Red)", kShootAndDrive);
-    m_chooser.addOption("Shoot and drive pick up and stay Right in front of speaker", kShootLeavePickup);
-    m_chooser.addOption("Do nothing(blue and red)", kSitAndDoNothing);
-    m_chooser.addOption("Shoot Leave Red Alliance closest to the amp",kShootLeaveTurnRedAmp);
-    m_chooser.addOption("Shoot Leave Blue Alliance closest to the amp",kShootLeaveTurnBlueAmp);
-    m_chooser.addOption("Shoot Leave Blue Alliance Farther to the amp",kShootLeaveTurnBlueFartherAmp);
-    m_chooser.addOption("Shoot Leave red Alliance Farther to the amp",kShootLeaveTurnRedFartherAmp);
-    m_chooser.addOption("Shoot Leave Pickup and Shoot(Blue and Red)",kShootLeavePickupDriveShoot);
+    m_chooser.setDefaultOption("Drive forward -- BLUE and RED", kLeave);
+    m_chooser.addOption("Shoot, drive forward from speaker center -- BLUE and RED", kShootAndDrive);
+    m_chooser.addOption("Shoot, drive forward from speaker center, intake -- BLUE and RED", kShootLeavePickup);
+    m_chooser.addOption("Do nothing -- BLUE and RED", kSitAndDoNothing);
+    m_chooser.addOption("Shoot, drive forward, turn -- RED closest to amp",kShootLeaveTurnRedAmp);
+    m_chooser.addOption("Shoot, drive forward, turn -- BLUE closest to amp",kShootLeaveTurnBlueAmp);
+    m_chooser.addOption("Shoot, drive forward, turn -- BLUE farther from amp",kShootLeaveTurnBlueFartherAmp);
+    m_chooser.addOption("Shoot, drive forward, turn -- RED Farther from amp",kShootLeaveTurnRedFartherAmp);
+    m_chooser.addOption("Shoot, drive forward, intake, drive backwards, shoot -- (Blue and Red)",kShootLeavePickupDriveShoot);
 
     SmartDashboard.putData("Auto choices", m_chooser);
-
+ 
     // set leader/followers - this connects the front and back motors to drive together
     backLeftDriveMotor.follow(frontLeftDriveMotor);
     backRightDriveMotor.follow(frontRightDriveMotor);
-
-
-    // not doinmg cameras
-    // CameraServer.startAutomaticCapture();
-    // CameraServer.startAutomaticCapture();
 
     // set motor inversion (may not have to do this - test without it later)
     frontLeftDriveMotor.setInverted(true);
@@ -178,7 +160,8 @@ public class Robot extends TimedRobot {
     rightShoot2.setInverted(false);
     rightIntake.setInverted(false);
     leftIntake.setInverted(true);
-
+    rightLift.setInverted(true);
+    leftLift.setInverted(false);
 
     // burn settings into memory
     frontLeftDriveMotor.burnFlash();
@@ -186,23 +169,10 @@ public class Robot extends TimedRobot {
     backRightDriveMotor.burnFlash();
     backLeftDriveMotor.burnFlash();
 
-
-     rightLift.setInverted(true);
-     leftLift.setInverted(false);
-
     gyro.reset();
 
-
-    // create differential drive objects 
-    // we removed '::set' from parameters
-
-    //  frontRobotDrive = new DifferentialDrive(frontLeftDriveMotor::set,frontRightDriveMotor::set);
-    //  backRobotDrive = new DifferentialDrive(backLeftDriveMotor::set,backRightDriveMotor::set);
+    // robot differential drive
     robotDrive = new DifferentialDrive(frontLeftDriveMotor,frontRightDriveMotor); //all motors connected
-
-    // shootDrive = new DifferentialDrive(leftShoot,rightShoot);
-    // intakeDrive = new DifferentialDrive(leftIntake,rightIntake);
-    // instead just make a method to just set the speed
     
   }   //end robotInit
 
@@ -223,7 +193,7 @@ public class Robot extends TimedRobot {
 
 
   private void turnInPlace(double targetAngle, double rotation) {
-    double direction = 1; // in NavX, clockwise is positive??
+    double direction = 1; 
     // dont mount NavX backwards!!!
     if ( (gyro.getAngle()) < targetAngle ) {
       direction = 1;
@@ -234,10 +204,8 @@ public class Robot extends TimedRobot {
     // gives room for error, tolerance range
     while (Math.abs((gyro.getAngle() - targetAngle )) >= 5) { // as your angles get closer, the difference gets smaller. 5 is a tolerance, 5 degrees of error
       robotDrive.arcadeDrive(0,rotation*direction);
-      SmartDashboard.putNumber("IM HERE", gyro.getAngle());
-      // SmartDashboard.putNumber("angle math", gyro.getAngle() - targetAngle);
+      SmartDashboard.putNumber("Turn in Place Angle", gyro.getAngle());
     }
-    // SmartDashboard.putNumber("IM HERE", gyro.getAngle());
 
     robotDrive.arcadeDrive(0,0); 
   }   // end turnInPlace
@@ -250,16 +218,15 @@ public class Robot extends TimedRobot {
       SmartDashboard.putNumber("Front right Distance", Math.abs(frontRightEncoder.getPosition()));
     }
      
-     robotDrive.arcadeDrive(0,0); // cases an error
+     robotDrive.arcadeDrive(0,0); 
   } // end driveDistance
 
 
-private void shoot(double speed){
+  private void shoot(double speed){ 
 
-   waitTimer.start();
-      SmartDashboard.putNumber("seconds", waitTimer.get());
+    waitTimer.start();
 
-    if ((waitTimer.get()) < 0.005) {
+    if ((waitTimer.get()) < 0.005) {  // ramp up top motors
     leftShoot.set(speed);
     rightShoot.set(speed);
     } 
@@ -271,7 +238,7 @@ private void shoot(double speed){
     waitTimer.stop();
     // waitTimer.reset();
    
-  }   // end shoot
+  } // end shoot
 
 
   private void shootAuto(double speed){
@@ -293,11 +260,11 @@ private void shoot(double speed){
    
   }   // end shootAuto
   
-
   private void intake(double speed) {
     rightIntake.set(speed);
     leftIntake.set(speed);
   }   // end intake
+
 
   private void lift(double speed){
    rightLift.set(speed);
@@ -345,31 +312,22 @@ private void shoot(double speed){
      frontLeftEncoder.setPosition(0);
      frontRightEncoder.setPosition(0);
     
-    // frontLeftDriveMotor.setInverted(false);
-    // backLeftDriveMotor.setInverted(false);
-    // frontRightDriveMotor.setInverted(true);
-    // backRightDriveMotor.setInverted(true);
-   
-  
 
     m_autoSelected = m_chooser.getSelected();
-    // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
+ 
     System.out.println("Auto selected: " + m_autoSelected);
 
     switch (m_autoSelected) {
 
-      case kShootAndDrive: 
+      case kShootAndDrive: // Shoot, drive forward from speaker center (BLUE and RED)
 
-      //  if (waitTimer.get() < 0.1){
         shootAuto(0.9);
-      //  }else {
-        // driveDistance(0.5,-336, frontRightEncoder.getPosition());
         driveDistance(0.5,-30, frontRightEncoder.getPosition());
-      //  }
+
       break; // end kShootAndDrive
 
 
-      case kLeave: // robot only drives forward
+      case kLeave: // Drive forward (BLUE and RED)
       
        driveDistance(0.2,-336, frontRightEncoder.getPosition());
        SmartDashboard.putNumber("Front right Distance", frontRightEncoder.getPosition());
@@ -377,7 +335,7 @@ private void shoot(double speed){
       break; // end kLeave
       
      
-      case kShootLeavePickup:
+      case kShootLeavePickup: // Shoot, drive forward from speaker center, intake -- BLUE and RED
 
         shootAuto(0.5);
         driveDistance(0.2,20, frontRightEncoder.getPosition());
@@ -391,7 +349,7 @@ private void shoot(double speed){
         
       break;
 
-      case kShootLeavePickupDriveShoot:
+      case kShootLeavePickupDriveShoot: // Shoot, drive forward, intake, drive backwards, shoot -- (Blue and Red)
 
         shootAuto(0.5);
         driveDistance(0.2,20, frontRightEncoder.getPosition());
@@ -408,12 +366,11 @@ private void shoot(double speed){
       break;
 
 
-      case kSitAndDoNothing:
+      case kSitAndDoNothing: // Do nothing -- BLUE and RED
         //done!
       break;
 
-      case kShootLeaveTurnRedAmp:
-        //turn red?
+      case kShootLeaveTurnRedAmp: // Shoot, drive forward, turn -- RED closest to amp
         shootAuto(0.5);
         driveDistance(0.2,20, frontRightEncoder.getPosition());
         turnInPlace(45,0.3);
@@ -421,7 +378,7 @@ private void shoot(double speed){
        
       break;
 
-      case kShootLeaveTurnBlueAmp:
+      case kShootLeaveTurnBlueAmp:  // Shoot, drive forward, turn -- BLUE closest to amp
 
         shootAuto(0.5);
         driveDistance(0.2,20, frontRightEncoder.getPosition());
@@ -430,14 +387,14 @@ private void shoot(double speed){
 
       break;
       
-      case kShootLeaveTurnBlueFartherAmp:
+      case kShootLeaveTurnBlueFartherAmp: // Shoot, drive forward, turn -- BLUE farther from amp
         shootAuto(0.5);
         driveDistance(0.2,20, frontRightEncoder.getPosition());
         turnInPlace(45,0.3);
         driveDistance(0.2, 336, frontRightEncoder.getPosition());
       break;
 
-      case kShootLeaveTurnRedFartherAmp:
+      case kShootLeaveTurnRedFartherAmp:  // Shoot, drive forward, turn -- RED Farther from amp
         shootAuto(0.5);
         driveDistance(0.2,20, frontRightEncoder.getPosition());
         turnInPlace(45,0.3);
