@@ -83,7 +83,7 @@ public class Robot extends TimedRobot {
 
 
   //declare autonomous modes
-  private static final String kShootAndDrive = "Shoot, drive forward from speaker center -- BLUE and RED";
+  private static final String kShoot = "Shoot -- BLUE and RED";
   private static final String kLeave = "Drive forward -- BLUE and RED";
   private static final String kShootLeavePickup = "Shoot, drive forward from speaker center, intake -- BLUE and RED";
   private static final String kShootLeaveTurnRedAmp= "Shoot, drive forward, turn -- RED closest to amp";
@@ -132,7 +132,7 @@ public class Robot extends TimedRobot {
 
     // set autonomous mode names
     m_chooser.setDefaultOption("Drive forward -- BLUE and RED", kLeave);
-    m_chooser.addOption("Shoot, drive forward from speaker center -- BLUE and RED", kShootAndDrive);
+    m_chooser.addOption("Shoot, -- BLUE and RED", kShoot);
     m_chooser.addOption("Shoot, drive forward from speaker center, intake -- BLUE and RED", kShootLeavePickup);
     m_chooser.addOption("Do nothing -- BLUE and RED", kSitAndDoNothing);
     m_chooser.addOption("Shoot, drive forward, turn -- RED closest to amp",kShootLeaveTurnRedAmp);
@@ -334,7 +334,7 @@ public class Robot extends TimedRobot {
 
     switch (m_autoSelected) {
 
-      case kShootAndDrive: // Shoot, drive forward from speaker center (BLUE and RED)
+      case kShoot: // Shoot, drive forward from speaker center (BLUE and RED)
 
       //  if (waitTimer.get() < 0.1){
         shootAuto(1);
