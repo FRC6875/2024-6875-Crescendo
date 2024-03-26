@@ -388,16 +388,10 @@ public class Robot extends TimedRobot {
         //done!
       break;
 
-<<<<<<< HEAD
       case kShootLeaveTurnRedAmp:
         //turn red?
         shootAuto(0.9);
         driveDistance(0.5,-20, frontRightEncoder.getPosition());
-=======
-      case kShootLeaveTurnRedAmp: // Shoot, drive forward, turn -- RED closest to amp
-        shootAuto(0.5);
-        driveDistance(0.2,20, frontRightEncoder.getPosition());
->>>>>>> f94c3958446d50401523edda592c6e0a04015d74
         turnInPlace(45,0.3);
         driveDistance(0.5, -330, frontRightEncoder.getPosition());
        
