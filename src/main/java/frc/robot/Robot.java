@@ -52,8 +52,8 @@ public class Robot extends TimedRobot {
   CANSparkMax rightIntake = new CANSparkMax(8, MotorType.kBrushed);//Shoud be brushed
 
   //declare lift motors
-  CANSparkMax rightLift = new CANSparkMax(9, MotorType.kBrushed);//Shoud be brushed
-  CANSparkMax leftLift = new CANSparkMax(10, MotorType.kBrushed);//Shoud be brushed
+  //  CANSparkMax rightLift = new CANSparkMax(12, MotorType.kBrushed);//Shoud be brushed
+  //  CANSparkMax leftLift = new CANSparkMax(11, MotorType.kBrushed);//Shoud be brushed
 
 
   //declare actuators
@@ -161,9 +161,9 @@ public class Robot extends TimedRobot {
     backRightDriveMotor.follow(frontRightDriveMotor);
 
 
-    // not doinmg cameras
-    // CameraServer.startAutomaticCapture();
-    // CameraServer.startAutomaticCapture();
+   
+     CameraServer.startAutomaticCapture();
+     CameraServer.startAutomaticCapture();
 
     // set motor inversion (may not have to do this - test without it later)
     frontLeftDriveMotor.setInverted(true);
@@ -187,8 +187,9 @@ public class Robot extends TimedRobot {
     backLeftDriveMotor.burnFlash();
 
 
-     rightLift.setInverted(true);
-     leftLift.setInverted(false);
+
+    //  rightLift.setInverted(true);
+    //  leftLift.setInverted(false);
 
     gyro.reset();
 
@@ -212,11 +213,11 @@ public class Robot extends TimedRobot {
 
   private double getSpeed() {
     if (Controller1.getLeftY()<0){
-      return  -Controller1.getLeftY()*Controller1.getLeftY()*0.5;
+      return  -Controller1.getLeftY()*Controller1.getLeftY();
       
     }
    else {
-    return   Controller1.getLeftY()*Controller1.getLeftY()*0.5;
+    return   Controller1.getLeftY()*Controller1.getLeftY();
    }
     
   }   // end getSpeed
@@ -279,14 +280,18 @@ private void shoot(double speed){
     waitTimer.start();
     SmartDashboard.putNumber("seconds", waitTimer.get());
 
-    while (waitTimer.get() < 0.005) { // ramp up top motors
+    while (waitTimer.get() < 1) { // ramp up top motors
       leftShoot.set(speed);
       rightShoot.set(speed);
     } 
-    while (waitTimer.get() < 0.1 ) {
+    while (waitTimer.get() < 1.5 ) {
       rightShoot2.set(speed);
       leftShoot2.set(speed);
     }
+      leftShoot.set(0);
+      rightShoot.set(0);
+      rightShoot2.set(0);
+      leftShoot2.set(0);
    
     waitTimer.stop();
     // waitTimer.reset();
@@ -299,10 +304,10 @@ private void shoot(double speed){
     leftIntake.set(speed);
   }   // end intake
 
-  private void lift(double speed){
-   rightLift.set(speed);
-   leftLift.set(speed);
-  }   // end lift
+  //  private void lift(double speed){
+  //   rightLift.set(speed);
+  //    leftLift.set(speed);
+  //  }   // end lift
 
 
 
@@ -361,17 +366,17 @@ private void shoot(double speed){
       case kShootAndDrive: 
 
       //  if (waitTimer.get() < 0.1){
-        shootAuto(0.9);
+        shootAuto(1);
       //  }else {
-        // driveDistance(0.5,-336, frontRightEncoder.getPosition());
-        driveDistance(0.5,-30, frontRightEncoder.getPosition());
+         //driveDistance(0.7,-36, frontRightEncoder.getPosition());
+        //driveDistance(0.3,-50, frontRightEncoder.getPosition());
       //  }
       break; // end kShootAndDrive
 
 
       case kLeave: // robot only drives forward
       
-       driveDistance(0.2,-336, frontRightEncoder.getPosition());
+       driveDistance(0.7,-150, frontRightEncoder.getPosition());
        SmartDashboard.putNumber("Front right Distance", frontRightEncoder.getPosition());
 
       break; // end kLeave
@@ -380,9 +385,9 @@ private void shoot(double speed){
       case kShootLeavePickup:
 
         shootAuto(0.5);
-        driveDistance(0.2,20, frontRightEncoder.getPosition());
+        driveDistance(0.5,-20, frontRightEncoder.getPosition());
         turnInPlace(45,0.3);
-        driveDistance(0.2,20, frontRightEncoder.getPosition());
+        driveDistance(0.5,-330, frontRightEncoder.getPosition());
 
         while (intakeSensor.get()) { // while intake senses reflection (note not in)
         intake(0.5); // intake
@@ -394,9 +399,9 @@ private void shoot(double speed){
       case kShootLeavePickupDriveShoot:
 
         shootAuto(0.5);
-        driveDistance(0.2,20, frontRightEncoder.getPosition());
-        turnInPlace(45,0.3);
-        driveDistance(0.2,20, frontRightEncoder.getPosition());
+        driveDistance(0.7,-20, frontRightEncoder.getPosition());
+        turnInPlace(45,0.5);
+        driveDistance(0.7,-200, frontRightEncoder.getPosition());
 
         while (intakeSensor.get()) { // while intake senses reflection (note not in)
           intake(0.5);  // intake
@@ -414,34 +419,34 @@ private void shoot(double speed){
 
       case kShootLeaveTurnRedAmp:
         //turn red?
-        shootAuto(0.5);
-        driveDistance(0.2,20, frontRightEncoder.getPosition());
+        shootAuto(0.9);
+        driveDistance(0.5,-20, frontRightEncoder.getPosition());
         turnInPlace(45,0.3);
-        driveDistance(0.2, 336, frontRightEncoder.getPosition());
+        driveDistance(0.5, -330, frontRightEncoder.getPosition());
        
       break;
 
       case kShootLeaveTurnBlueAmp:
 
         shootAuto(0.5);
-        driveDistance(0.2,20, frontRightEncoder.getPosition());
+        driveDistance(0.2,-20, frontRightEncoder.getPosition());
         turnInPlace(45,0.3);
-        driveDistance(0.2, 336, frontRightEncoder.getPosition());
+        driveDistance(0.2, -336, frontRightEncoder.getPosition());
 
       break;
       
       case kShootLeaveTurnBlueFartherAmp:
         shootAuto(0.5);
-        driveDistance(0.2,20, frontRightEncoder.getPosition());
+        driveDistance(0.2,-20, frontRightEncoder.getPosition());
         turnInPlace(45,0.3);
-        driveDistance(0.2, 336, frontRightEncoder.getPosition());
+        driveDistance(0.2, -336, frontRightEncoder.getPosition());
       break;
 
       case kShootLeaveTurnRedFartherAmp:
         shootAuto(0.5);
-        driveDistance(0.2,20, frontRightEncoder.getPosition());
+        driveDistance(0.2,-20, frontRightEncoder.getPosition());
         turnInPlace(45,0.3);
-        driveDistance(0.2, 336, frontRightEncoder.getPosition());
+        driveDistance(0.2, -336, frontRightEncoder.getPosition());
       break;
 
 
@@ -471,15 +476,15 @@ private void shoot(double speed){
   
   // frontRobotDrive.arcadeDrive(getSpeed(),Controller1.getLeftX());
   // backRobotDrive.arcadeDrive(getSpeed(),Controller1.getLeftX());
-  robotDrive.arcadeDrive(getSpeed(),Controller1.getLeftX()*0.5); // getSpeed()-getleftY instead of
+  robotDrive.arcadeDrive(getSpeed(),(Controller1.getLeftX()*0.7 )); //Controller1.getLeftX()*Controller1.getLeftX())); // getSpeed()-getleftY instead of
   // robotDrive.arcadeDrive(Controller1.getLeftY(),Controller1.getLeftX());
   // multiple either one by a decimal to slow down
   
   // ShootSpeaker - X button
   if (Controller2.getXButton()) {
     shoot(0.9); //shoot at 0.9 speed (change speed accoridngly)
-  } else if (Controller2.getYButton()) {
-    shoot(0.5); //shoot at 0.9 speed (change speed accoridngly)
+  // } else if (Controller2.getYButton()) {
+  //   shoot(0.5); //shoot at 0.9 speed (change speed accoridngly)
   }else {
     shoot(0.0);
     waitTimer.stop();
@@ -487,10 +492,18 @@ private void shoot(double speed){
   }
 
   // ShootAmp - Y
-  // if (Controller2.getYButton()) {
-  //   shoot(0.2); //shoot at 0.9 speed (change speed accoridngly)
-  // }
-  // else {
+//   if (Controller2.getYButton()) {
+//     leftShoot.set(0.3);
+//     rightShoot.set(0.3);
+//     leftShoot2.set(0.3);
+//     rightShoot2.set(0.3);//shoot at 0.9 speed (change speed accoridngly)
+//    }
+//  else {
+//    leftShoot.set(0.0);
+//     rightShoot.set(0.0);
+//     leftShoot2.set(0.0);
+//     rightShoot2.set(0.0);
+//  }
   // shoot(0.0);
   // waitTimer.stop();
   // waitTimer.reset();
@@ -498,21 +511,25 @@ private void shoot(double speed){
   
   // Intake - A button
   if (Controller2.getAButton()) {
-    intake(0.5); //intake at 0.1 speed (change speed accoridngly)
+    intake(0.5); //intake at 0.1 speed (change speed accoringly)
   }else intake(0.0);
 
-  if(Controller1.getBButton()){
-    gyro.reset();
-  }
+  // if(Controller1.getBButton()){
+  //   gyro.reset();
+  // }
   //Lift - Dpad Up = up
   //     - Dpad down = down
-   if(Controller2.getPOV() == 0 ) {//UP
-    lift(0.1);
+  //  if(Controller2.getBButton()) {//UP
+  //   lift(1);
 
-   }
-   else if(Controller2.getPOV() == 180){//DOWN
-    lift(-0.1);
-   }
+  //   } else if(Controller2.getYButton()){//DOWN
+  //     lift(-1);
+  //   } else{
+  //    lift(0);
+  // }
+
+   // lift(Controller2.getLeftY());
+    
   // // actuators - X button
   // if (Controller2.getXButton()) {
   //   actuator1.setSpeed(0.95);
