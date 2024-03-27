@@ -149,8 +149,8 @@ public class Robot extends TimedRobot {
 
 
    
-     CameraServer.startAutomaticCapture();
-     CameraServer.startAutomaticCapture();
+     //CameraServer.startAutomaticCapture();
+    // CameraServer.startAutomaticCapture();
 
     // set motor inversion (may not have to do this - test without it later)
     frontLeftDriveMotor.setInverted(true);
@@ -190,17 +190,27 @@ public class Robot extends TimedRobot {
 
 //////////////////// START METHODS ////////////////////////
 
-  private double getSpeed() {
+  private double getSpeedY() {
     if (Controller1.getLeftY()<0){
-      return  -Controller1.getLeftY()*Controller1.getLeftY();
+      return  -Controller1.getLeftY()*Controller1.getLeftY()*Controller1.getLeftY();
       
     }
    else {
-    return   Controller1.getLeftY()*Controller1.getLeftY();
+    return   Controller1.getLeftY()*Controller1.getLeftY()*Controller1.getLeftY();
    }
     
   }   // end getSpeed
 
+  private double getSpeedX() {
+    if (Controller1.getLeftX()<0){
+      return  -Controller1.getLeftX()*Controller1.getLeftX()*Controller1.getLeftX();
+      
+    }
+   else {
+    return   Controller1.getLeftX()*Controller1.getLeftX()*Controller1.getLeftX();
+   }
+    
+  }  
 
   private void turnInPlace(double targetAngle, double rotation) {
     double direction = 1; 
@@ -307,6 +317,8 @@ public class Robot extends TimedRobot {
     SmartDashboard.putBoolean("Shoot Sensor",intakeSensor.get());
     SmartDashboard.putNumber("gyro", gyro.getAngle());
  
+     
+
   }
 
   /**
@@ -444,10 +456,14 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
+     
+    CameraServer.startAutomaticCapture();
+     CameraServer.startAutomaticCapture();
+
   
   // frontRobotDrive.arcadeDrive(getSpeed(),Controller1.getLeftX());
   // backRobotDrive.arcadeDrive(getSpeed(),Controller1.getLeftX());
-  robotDrive.arcadeDrive(getSpeed(),(Controller1.getLeftX()*0.7 )); //Controller1.getLeftX()*Controller1.getLeftX())); // getSpeed()-getleftY instead of
+  robotDrive.arcadeDrive(getSpeedY(),getSpeedX()); //Controller1.getLeftX()*Controller1.getLeftX())); // getSpeed()-getleftY instead of
   // robotDrive.arcadeDrive(Controller1.getLeftY(),Controller1.getLeftX());
   // multiple either one by a decimal to slow down
   
