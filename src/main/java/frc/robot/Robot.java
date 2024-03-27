@@ -450,6 +450,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     gyro.reset();
+    m_autoSelected.close();
   }
 
 
