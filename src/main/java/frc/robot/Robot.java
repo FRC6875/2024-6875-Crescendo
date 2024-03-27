@@ -459,7 +459,7 @@ public class Robot extends TimedRobot {
      
     CameraServer.startAutomaticCapture();
      CameraServer.startAutomaticCapture();
-
+ 
   
   // frontRobotDrive.arcadeDrive(getSpeed(),Controller1.getLeftX());
   // backRobotDrive.arcadeDrive(getSpeed(),Controller1.getLeftX());
