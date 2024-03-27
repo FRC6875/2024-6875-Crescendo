@@ -72,6 +72,8 @@ public class Robot extends TimedRobot {
   XboxController Controller1 = new XboxController(0); //drive controller
   XboxController Controller2 = new XboxController(1); //shoot/intake/actuator controller
 
+ 
+
 
   //declare Encorders
   RelativeEncoder frontLeftEncoder;
@@ -149,7 +151,7 @@ public class Robot extends TimedRobot {
 
 
    
-     //CameraServer.startAutomaticCapture();
+     CameraServer.startAutomaticCapture();
     // CameraServer.startAutomaticCapture();
 
     // set motor inversion (may not have to do this - test without it later)
@@ -450,7 +452,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     gyro.reset();
-    m_autoSelected.close();
+    // m_chooser.close(); // might work
   }
 
 
@@ -458,8 +460,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
      
-    CameraServer.startAutomaticCapture();
-     CameraServer.startAutomaticCapture();
+    // CameraServer.startAutomaticCapture();
  
   
   // frontRobotDrive.arcadeDrive(getSpeed(),Controller1.getLeftX());
