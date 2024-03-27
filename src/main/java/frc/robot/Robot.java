@@ -336,11 +336,12 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     gyro.reset(); 
-     backLeftEncoder.setPosition(0);
-     backRightEncoder.setPosition(0);
-     frontLeftEncoder.setPosition(0);
-     frontRightEncoder.setPosition(0);
-    
+    backLeftEncoder.setPosition(0);
+    backRightEncoder.setPosition(0);
+    frontLeftEncoder.setPosition(0);
+    frontRightEncoder.setPosition(0);
+
+    Timer autoTimer = new Timer(); 
 
     m_autoSelected = m_chooser.getSelected();
  
@@ -356,6 +357,7 @@ public class Robot extends TimedRobot {
          //driveDistance(0.7,-36, frontRightEncoder.getPosition());
         //driveDistance(0.3,-50, frontRightEncoder.getPosition());
       //  }
+
       break; // end kShootAndDrive
 
 
