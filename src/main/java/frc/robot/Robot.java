@@ -88,6 +88,7 @@ public class Robot extends TimedRobot {
   //declare autonomous modes
   private static final String kShoot = "Shoot -- BLUE and RED";
   private static final String kLeave = "Drive forward -- BLUE and RED";
+  private static final String kShootLeave = "Shoot Drive forward -- BLUE and RED";
   private static final String kShootLeavePickup = "Shoot, drive forward from speaker center, intake -- BLUE and RED";
   private static final String kShootLeaveTurnRedAmp= "Shoot, drive forward, turn -- RED closest to amp";
   private static final String kShootLeaveTurnBlueAmp = "Shoot, drive forward, turn -- BLUE closest to amp";
@@ -136,6 +137,7 @@ public class Robot extends TimedRobot {
     // set autonomous mode names
     m_chooser.setDefaultOption("Drive forward -- BLUE and RED", kLeave);
     m_chooser.addOption("Shoot, -- BLUE and RED", kShoot);
+    m_chooser.addOption("Shoot Drive forward -- BLUE and RED", kShootLeave);
     m_chooser.addOption("Shoot, drive forward from speaker center, intake -- BLUE and RED", kShootLeavePickup);
     m_chooser.addOption("Do nothing -- BLUE and RED", kSitAndDoNothing);
     m_chooser.addOption("Shoot, drive forward, turn -- RED closest to amp",kShootLeaveTurnRedAmp);
@@ -195,7 +197,7 @@ public class Robot extends TimedRobot {
 
   private double getSpeedY() {
     if (Controller1.getLeftY()<0){
-      return  -Controller1.getLeftY()*Controller1.getLeftY()*Controller1.getLeftY();
+      return  -1*(Controller1.getLeftY()*Controller1.getLeftY()*Controller1.getLeftY());
       
     }
    else {
@@ -204,16 +206,16 @@ public class Robot extends TimedRobot {
     
   }   // end getSpeed
 
-  private double getSpeedX() {
-    if (Controller1.getLeftX()<0){
-      return  -Controller1.getLeftX()*Controller1.getLeftX()*Controller1.getLeftX();
+  // private double getSpeedX() {
+  //   if (Controller1.getLeftX()<0){
+  //     return  -Controller1.getLeftX()*Controller1.getLeftX()*Controller1.getLeftX();
       
-    }
-   else {
-    return   Controller1.getLeftX()*Controller1.getLeftX()*Controller1.getLeftX();
-   }
+  //   }
+  //  else {
+  //   return   Controller1.getLeftX()*Controller1.getLeftX()*Controller1.getLeftX();
+  //  }
     
-  }  
+  // }  
 
   private void turnInPlace(double targetAngle, double rotation) {
     double direction = 1; 
@@ -225,7 +227,7 @@ public class Robot extends TimedRobot {
       direction = -1;
     }
     // gives room for error, tolerance range
-    while (Math.abs((gyro.getAngle() - targetAngle )) >= 5 && autoTimer.get() > 0.015) { // as your angles get closer, the difference gets smaller. 5 is a tolerance, 5 degrees of error
+    while (Math.abs((gyro.getAngle() - targetAngle )) >= 5) { // as your angles get closer, the difference gets smaller. 5 is a tolerance, 5 degrees of error
       robotDrive.arcadeDrive(0,rotation*direction);
       SmartDashboard.putNumber("Turn in Place Angle", gyro.getAngle());
     }
@@ -236,7 +238,7 @@ public class Robot extends TimedRobot {
 
   private void driveDistance(double speed, double targetDistance, double initialPostion){
     targetDistance = targetDistance + initialPostion;
-    while (Math.abs(frontRightEncoder.getPosition()) < Math.abs(targetDistance) && autoTimer.get() > 0.0015) { //while the encoder (starting at 0 distance) is less than the target distance
+    while (Math.abs(frontRightEncoder.getPosition()) < Math.abs(targetDistance)) { //while the encoder (starting at 0 distance) is less than the target distance
       robotDrive.arcadeDrive(speed*-1,0); // drive forward at given speed
       SmartDashboard.putNumber("Front right Distance", Math.abs(frontRightEncoder.getPosition()));
     }
@@ -269,11 +271,11 @@ public class Robot extends TimedRobot {
     waitTimer.start();
     SmartDashboard.putNumber("seconds", waitTimer.get());
 
-    while (waitTimer.get() < 1 && autoTimer.get() > 15) { // ramp up top motors
+    while (waitTimer.get() < 1) { // ramp up top motors
       leftShoot.set(speed);
       rightShoot.set(speed);
     } 
-    while (waitTimer.get() < 1.5 && autoTimer.get() > 15) {
+    while (waitTimer.get() < 1.5) {
       rightShoot2.set(speed);
       leftShoot2.set(speed);
     }
@@ -369,7 +371,10 @@ public class Robot extends TimedRobot {
 
       break; // end kLeave
       
-     
+     case kShootLeave:
+     shoot(0.9);
+     driveDistance(0.5,-150, frontRightEncoder.getPosition());
+     break;
       case kShootLeavePickup: // Shoot, drive forward from speaker center, intake -- BLUE and RED
 
         shootAuto(0.5);
@@ -468,7 +473,7 @@ public class Robot extends TimedRobot {
   
   // frontRobotDrive.arcadeDrive(getSpeed(),Controller1.getLeftX());
   // backRobotDrive.arcadeDrive(getSpeed(),Controller1.getLeftX());
-  robotDrive.arcadeDrive(getSpeedY(),getSpeedX()); //Controller1.getLeftX()*Controller1.getLeftX())); // getSpeed()-getleftY instead of
+  robotDrive.arcadeDrive(getSpeedY(),Controller1.getLeftX()*0.7); //Controller1.getLeftX()*Controller1.getLeftX())); // getSpeed()-getleftY instead of
   // robotDrive.arcadeDrive(Controller1.getLeftY(),Controller1.getLeftX());
   // multiple either one by a decimal to slow down
   
