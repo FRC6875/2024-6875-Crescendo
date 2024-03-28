@@ -66,6 +66,7 @@ public class Robot extends TimedRobot {
   AHRS gyro = new AHRS(SPI.Port.kMXP);
 
   Timer waitTimer = new Timer();
+  Timer autoTimer = new Timer();
 
 
   // declare XboxControllers
@@ -224,7 +225,7 @@ public class Robot extends TimedRobot {
       direction = -1;
     }
     // gives room for error, tolerance range
-    while (Math.abs((gyro.getAngle() - targetAngle )) >= 5) { // as your angles get closer, the difference gets smaller. 5 is a tolerance, 5 degrees of error
+    while (Math.abs((gyro.getAngle() - targetAngle )) >= 5 && autoTimer.get() > 15) { // as your angles get closer, the difference gets smaller. 5 is a tolerance, 5 degrees of error
       robotDrive.arcadeDrive(0,rotation*direction);
       SmartDashboard.putNumber("Turn in Place Angle", gyro.getAngle());
     }
@@ -235,7 +236,7 @@ public class Robot extends TimedRobot {
 
   private void driveDistance(double speed, double targetDistance, double initialPostion){
     targetDistance = targetDistance + initialPostion;
-    while (Math.abs(frontRightEncoder.getPosition()) < Math.abs(targetDistance) ) { //while the encoder (starting at 0 distance) is less than the target distance
+    while (Math.abs(frontRightEncoder.getPosition()) < Math.abs(targetDistance) && autoTimer.get() > 15) { //while the encoder (starting at 0 distance) is less than the target distance
       robotDrive.arcadeDrive(speed*-1,0); // drive forward at given speed
       SmartDashboard.putNumber("Front right Distance", Math.abs(frontRightEncoder.getPosition()));
     }
@@ -268,11 +269,11 @@ public class Robot extends TimedRobot {
     waitTimer.start();
     SmartDashboard.putNumber("seconds", waitTimer.get());
 
-    while (waitTimer.get() < 1) { // ramp up top motors
+    while (waitTimer.get() < 1 && autoTimer.get() > 15) { // ramp up top motors
       leftShoot.set(speed);
       rightShoot.set(speed);
     } 
-    while (waitTimer.get() < 1.5 ) {
+    while (waitTimer.get() < 1.5 && autoTimer.get() > 15) {
       rightShoot2.set(speed);
       leftShoot2.set(speed);
     }
@@ -336,12 +337,12 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     gyro.reset(); 
-    backLeftEncoder.setPosition(0);
-    backRightEncoder.setPosition(0);
-    frontLeftEncoder.setPosition(0);
-    frontRightEncoder.setPosition(0);
-
-    Timer autoTimer = new Timer(); 
+     backLeftEncoder.setPosition(0);
+     backRightEncoder.setPosition(0);
+     frontLeftEncoder.setPosition(0);
+     frontRightEncoder.setPosition(0);
+    
+     autoTimer.start();
 
     m_autoSelected = m_chooser.getSelected();
  
@@ -357,7 +358,6 @@ public class Robot extends TimedRobot {
          //driveDistance(0.7,-36, frontRightEncoder.getPosition());
         //driveDistance(0.3,-50, frontRightEncoder.getPosition());
       //  }
-
       break; // end kShootAndDrive
 
 
