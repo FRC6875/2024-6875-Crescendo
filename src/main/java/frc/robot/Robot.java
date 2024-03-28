@@ -225,7 +225,7 @@ public class Robot extends TimedRobot {
       direction = -1;
     }
     // gives room for error, tolerance range
-    while (Math.abs((gyro.getAngle() - targetAngle )) >= 5 && autoTimer.get() > 15) { // as your angles get closer, the difference gets smaller. 5 is a tolerance, 5 degrees of error
+    while (Math.abs((gyro.getAngle() - targetAngle )) >= 5 && autoTimer.get() > 0.015) { // as your angles get closer, the difference gets smaller. 5 is a tolerance, 5 degrees of error
       robotDrive.arcadeDrive(0,rotation*direction);
       SmartDashboard.putNumber("Turn in Place Angle", gyro.getAngle());
     }
@@ -236,7 +236,7 @@ public class Robot extends TimedRobot {
 
   private void driveDistance(double speed, double targetDistance, double initialPostion){
     targetDistance = targetDistance + initialPostion;
-    while (Math.abs(frontRightEncoder.getPosition()) < Math.abs(targetDistance) && autoTimer.get() > 15) { //while the encoder (starting at 0 distance) is less than the target distance
+    while (Math.abs(frontRightEncoder.getPosition()) < Math.abs(targetDistance) && autoTimer.get() > 0.0015) { //while the encoder (starting at 0 distance) is less than the target distance
       robotDrive.arcadeDrive(speed*-1,0); // drive forward at given speed
       SmartDashboard.putNumber("Front right Distance", Math.abs(frontRightEncoder.getPosition()));
     }
@@ -319,6 +319,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("Back Right Distance", backRightEncoder.getPosition());
     SmartDashboard.putBoolean("Shoot Sensor",intakeSensor.get());
     SmartDashboard.putNumber("gyro", gyro.getAngle());
+    SmartDashboard.putNumber(" auto seconds", autoTimer.get());
  
      
 
@@ -362,8 +363,8 @@ public class Robot extends TimedRobot {
 
 
       case kLeave: // Drive forward (BLUE and RED)
-      
-       driveDistance(0.7,-150, frontRightEncoder.getPosition());
+      //driveDistance(0.2,-2000, frontRightEncoder.getPosition());
+        driveDistance(0.7,-150, frontRightEncoder.getPosition());
        SmartDashboard.putNumber("Front right Distance", frontRightEncoder.getPosition());
 
       break; // end kLeave
