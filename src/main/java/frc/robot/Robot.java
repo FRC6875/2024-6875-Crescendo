@@ -4,11 +4,13 @@
 
 package frc.robot;
 
+import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkRelativeEncoder.Type;
-import com.revrobotics.REVLibError;
+
+
 
 
 import edu.wpi.first.cameraserver.CameraServer;
@@ -22,6 +24,7 @@ import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.SPI;
 import java.lang.Math;
 import edu.wpi.first.wpilibj.Timer;
+
 
 
 /**
@@ -116,6 +119,17 @@ public class Robot extends TimedRobot {
     frontRightDriveMotor.restoreFactoryDefaults();
     backRightDriveMotor.restoreFactoryDefaults();
     backLeftDriveMotor.restoreFactoryDefaults();
+    // set motor idle mode to brake
+    frontLeftDriveMotor.setIdleMode(IdleMode.kBrake);
+    frontRightDriveMotor.setIdleMode(IdleMode.kBrake);
+    backRightDriveMotor.setIdleMode(IdleMode.kBrake);
+    backLeftDriveMotor.setIdleMode(IdleMode.kBrake);
+    // set ramp rate to 1 s
+    frontLeftDriveMotor.setClosedLoopRampRate(1);
+    frontRightDriveMotor.setClosedLoopRampRate(1);
+    backRightDriveMotor.setClosedLoopRampRate(1);
+    backLeftDriveMotor.setClosedLoopRampRate(1);
+
     leftShoot.restoreFactoryDefaults();
     rightShoot.restoreFactoryDefaults();
 
@@ -167,9 +181,9 @@ public class Robot extends TimedRobot {
     leftIntake.setInverted(false);
     rightIntake.setInverted(true);   
     leftShoot2.setInverted(true);
-    rightShoot2.setInverted(false);
+    rightShoot2.setInverted(true);
     rightIntake.setInverted(false);
-    leftIntake.setInverted(true);
+    leftIntake.setInverted(false);
     // rightLift.setInverted(true);
     // leftLift.setInverted(false);
 
@@ -188,6 +202,8 @@ public class Robot extends TimedRobot {
 
     // robot differential drive
     robotDrive = new DifferentialDrive(frontLeftDriveMotor,frontRightDriveMotor); //all motors connected
+
+    // WaitCommand wait = new WaitCommand(3);
     
   }   //end robotInit
 
@@ -197,11 +213,11 @@ public class Robot extends TimedRobot {
 
   private double getSpeedY() {
     if (Controller1.getLeftY()<0){
-      return  -1*(Controller1.getLeftY()*Controller1.getLeftY()*Controller1.getLeftY());
-      
+      // return  -Controller1.getLeftY()*Controller1.getLeftY();
+      return -1*(Math.pow(Controller1.getLeftY(),4)*0.8);
     }
    else {
-    return   Controller1.getLeftY()*Controller1.getLeftY()*Controller1.getLeftY();
+    return  Math.pow(Controller1.getLeftY(),4);
    }
     
   }   // end getSpeed
@@ -237,10 +253,22 @@ public class Robot extends TimedRobot {
 
 
   private void driveDistance(double speed, double targetDistance, double initialPostion){
+    initialPostion = frontRightEncoder.getPosition();
     targetDistance = targetDistance + initialPostion;
     while (Math.abs(frontRightEncoder.getPosition()) < Math.abs(targetDistance)) { //while the encoder (starting at 0 distance) is less than the target distance
       robotDrive.arcadeDrive(speed*-1,0); // drive forward at given speed
       SmartDashboard.putNumber("Front right Distance", Math.abs(frontRightEncoder.getPosition()));
+    }
+     
+     robotDrive.arcadeDrive(0,0); 
+  } // end driveDistance
+
+  private void driveDistanceBack(double speed, double targetDistance, double initialPostion){
+    initialPostion = frontRightEncoder.getPosition();
+    targetDistance = targetDistance + initialPostion;
+    while ((frontRightEncoder.getPosition()) < (targetDistance)) { //while the encoder (starting at 0 distance) is less than the target distance
+      robotDrive.arcadeDrive(speed*1,0); // drive backward at given speed
+      SmartDashboard.putNumber("Front right Distance", (frontRightEncoder.getPosition()));
     }
      
      robotDrive.arcadeDrive(0,0); 
@@ -269,25 +297,80 @@ public class Robot extends TimedRobot {
   private void shootAuto(double speed){
 
     waitTimer.start();
+    autoTimer.start();
     SmartDashboard.putNumber("seconds", waitTimer.get());
+    // while(autoTimer.get()> 3){
 
-    while (waitTimer.get() < 1) { // ramp up top motors
-      leftShoot.set(speed);
-      rightShoot.set(speed);
-    } 
-    while (waitTimer.get() < 1.5) {
-      rightShoot2.set(speed);
-      leftShoot2.set(speed);
-    }
-      leftShoot.set(0);
-      rightShoot.set(0);
-      rightShoot2.set(0);
-      leftShoot2.set(0);
-   
-    waitTimer.stop();
+      while (waitTimer.get() < 3) { // ramp up top motors
+        leftShoot.set(speed);
+        rightShoot.set(speed);
+      } 
+      while (waitTimer.get() < 3.5) {
+        rightShoot2.set(speed);
+        leftShoot2.set(speed);
+      }
+        leftShoot.set(0);
+        rightShoot.set(0);
+        rightShoot2.set(0);
+        leftShoot2.set(0);
+    
+      waitTimer.stop();
+  // }
     // waitTimer.reset();
+    autoTimer.stop();
    
   }   // end shootAuto
+  private void shootAuto2(double speed){
+
+    waitTimer.start();
+    autoTimer.start();
+    SmartDashboard.putNumber("seconds", waitTimer.get());
+    // while(autoTimer.get()> 3){
+
+      while (waitTimer.get() < 6) { // ramp up top motors
+        leftShoot.set(speed);
+        rightShoot.set(speed);
+      } 
+      while (waitTimer.get() < 6.5) {
+        rightShoot2.set(speed);
+        leftShoot2.set(speed);
+      }
+        leftShoot.set(0);
+        rightShoot.set(0);
+        rightShoot2.set(0);
+        leftShoot2.set(0);
+    
+      waitTimer.stop();
+  // }
+    // waitTimer.reset();
+    autoTimer.stop();
+   
+  } 
+
+   private void intakeAuto(double speed){
+
+    waitTimer.start();
+    autoTimer.start();
+    SmartDashboard.putNumber("seconds", waitTimer.get());
+    // while(autoTimer.get()> 3){
+
+      while (waitTimer.get() < 4) { // ramp up top motors
+        leftIntake.set(speed);
+        rightIntake.set(speed);
+      } 
+     
+        leftIntake.set(0);
+        rightIntake.set(0);
+        
+    
+      waitTimer.stop();
+  // }
+    // waitTimer.reset();
+    autoTimer.stop();
+   
+  }   // end shootAuto
+
+  
   
   private void intake(double speed) {
     rightIntake.set(speed);
@@ -345,7 +428,8 @@ public class Robot extends TimedRobot {
      frontLeftEncoder.setPosition(0);
      frontRightEncoder.setPosition(0);
     
-     autoTimer.start();
+     autoTimer.reset();
+    //  autoTimer.start();
 
     m_autoSelected = m_chooser.getSelected();
  
@@ -354,7 +438,7 @@ public class Robot extends TimedRobot {
     switch (m_autoSelected) {
 
       case kShoot: // Shoot, drive forward from speaker center (BLUE and RED)
-
+      
       //  if (waitTimer.get() < 0.1){
         shootAuto(1);
       //  }else {
@@ -366,15 +450,16 @@ public class Robot extends TimedRobot {
 
       case kLeave: // Drive forward (BLUE and RED)
       //driveDistance(0.2,-2000, frontRightEncoder.getPosition());
-        driveDistance(0.7,-150, frontRightEncoder.getPosition());
+        driveDistance(0.7,-200, frontRightEncoder.getPosition());
        SmartDashboard.putNumber("Front right Distance", frontRightEncoder.getPosition());
 
       break; // end kLeave
       
      case kShootLeave:
-     shoot(0.9);
-     driveDistance(0.5,-150, frontRightEncoder.getPosition());
+     shootAuto(1);
+     driveDistance(0.5,-100, frontRightEncoder.getPosition());
      break;
+
       case kShootLeavePickup: // Shoot, drive forward from speaker center, intake -- BLUE and RED
 
         shootAuto(0.5);
@@ -391,18 +476,17 @@ public class Robot extends TimedRobot {
 
       case kShootLeavePickupDriveShoot: // Shoot, drive forward, intake, drive backwards, shoot -- (Blue and Red)
 
-        shootAuto(0.5);
-        driveDistance(0.7,-20, frontRightEncoder.getPosition());
-        turnInPlace(45,0.5);
-        driveDistance(0.7,-200, frontRightEncoder.getPosition());
-
-        while (intakeSensor.get()) { // while intake senses reflection (note not in)
-          intake(0.5);  // intake
-        } // will stop when it senses note
-          
-        driveDistance(0.2,20, frontRightEncoder.getPosition());
-        shootAuto(0.5);
+       shootAuto(1);
+       driveDistance(0.7,-100, frontRightEncoder.getPosition());
+       intakeAuto(0.9);
+      //  backLeftEncoder.setPosition(0);
+      //  backRightEncoder.setPosition(0);
+      //  frontLeftEncoder.setPosition(0);
+      //  frontRightEncoder.setPosition(0);
+       driveDistanceBack(0.7,100.5,frontRightEncoder.getPosition());
+       shootAuto2(1);
         
+
       break;
 
 
@@ -473,7 +557,7 @@ public class Robot extends TimedRobot {
   
   // frontRobotDrive.arcadeDrive(getSpeed(),Controller1.getLeftX());
   // backRobotDrive.arcadeDrive(getSpeed(),Controller1.getLeftX());
-  robotDrive.arcadeDrive(getSpeedY(),Controller1.getLeftX()*0.7); //Controller1.getLeftX()*Controller1.getLeftX())); // getSpeed()-getleftY instead of
+  robotDrive.arcadeDrive(getSpeedY()*0.7,Controller1.getLeftX()*0.7); //Controller1.getLeftX()*Controller1.getLeftX())); // getSpeed()-getleftY instead of
   // robotDrive.arcadeDrive(Controller1.getLeftY(),Controller1.getLeftX());
   // multiple either one by a decimal to slow down
   
